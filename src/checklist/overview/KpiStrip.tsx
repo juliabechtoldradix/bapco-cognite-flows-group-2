@@ -18,10 +18,8 @@ type KpiItem = {
   label: string;
   value: number;
   countVariant: 'default' | 'warning' | 'critical';
-  /** Card surface — matches route status badge colors for Ongoing / Done. */
-  boxClassName: string;
-  labelClassName: string;
-  valueClassName: string;
+  /** Extra Count surface classes (Ongoing/Done match route status badge colors). */
+  countClassName: string;
 };
 
 function buildItems(kpis: ChecklistKpis): KpiItem[] {
@@ -31,45 +29,35 @@ function buildItems(kpis: ChecklistKpis): KpiItem[] {
       label: KPI_LABELS.toDo,
       value: kpis.toDo,
       countVariant: 'default',
-      boxClassName: 'bg-alternate-background',
-      labelClassName: 'text-muted-foreground',
-      valueClassName: 'text-foreground',
+      countClassName: '',
     },
     {
       key: 'ongoing',
       label: KPI_LABELS.ongoing,
       value: kpis.ongoing,
       countVariant: 'default',
-      boxClassName: 'bg-info-background',
-      labelClassName: 'text-info-foreground-on-info',
-      valueClassName: 'text-info-foreground-on-info',
+      countClassName: 'bg-info-background text-info-foreground-on-info',
     },
     {
       key: 'done',
       label: KPI_LABELS.done,
       value: kpis.done,
       countVariant: 'default',
-      boxClassName: 'bg-success-background',
-      labelClassName: 'text-success-foreground-on-success',
-      valueClassName: 'text-success-foreground-on-success',
+      countClassName: 'bg-success-background text-success-foreground-on-success',
     },
     {
       key: 'overdue',
       label: KPI_LABELS.overdue,
       value: kpis.overdue,
       countVariant: 'warning',
-      boxClassName: 'bg-alternate-background',
-      labelClassName: 'text-muted-foreground',
-      valueClassName: 'text-foreground',
+      countClassName: '',
     },
     {
       key: 'withNotOk',
       label: KPI_LABELS.withNotOk,
       value: kpis.withNotOk,
       countVariant: 'critical',
-      boxClassName: 'bg-alternate-background',
-      labelClassName: 'text-muted-foreground',
-      valueClassName: 'text-foreground',
+      countClassName: '',
     },
   ];
 }
@@ -112,13 +100,14 @@ export function KpiStrip({ kpis, state, error }: KpiStripProps) {
       {items.map((item) => (
         <div
           key={item.key}
-          className={`rounded-xl p-4 ${item.boxClassName}`}
+          className="rounded-xl bg-alternate-background p-4"
           data-testid={`kpi-${item.key}`}
         >
-          <p className={`text-xs font-medium ${item.labelClassName}`}>{item.label}</p>
+          <p className="text-xs font-medium text-muted-foreground">{item.label}</p>
           <Count
             variant={item.countVariant}
-            className={`mt-1 text-2xl font-semibold ${item.valueClassName}`}
+            className={`mt-1 text-2xl font-semibold ${item.countClassName}`.trim()}
+            data-testid={`kpi-count-${item.key}`}
           >
             {item.value}
           </Count>

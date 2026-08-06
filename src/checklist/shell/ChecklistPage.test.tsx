@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { HostAppAPI } from '@cognite/app-sdk';
 import { CogniteClient } from '@cognite/sdk';
@@ -12,6 +13,7 @@ type SdkDeps = NonNullable<ComponentProps<typeof CogniteSdkProvider>['deps']>;
 
 describe(ChecklistPage.name, () => {
   it('wires host state into overview and loads quick view results', async () => {
+    const user = userEvent.setup();
     const syncInternalState = vi.fn(() => Promise.resolve(true));
     render(
       <CogniteSdkProvider deps={makeSdkDeps()}>
@@ -27,6 +29,8 @@ describe(ChecklistPage.name, () => {
     );
 
     await waitFor(() => expect(screen.getByTestId('checklist-search')).toHaveValue('Digester'));
+    const sectionTrigger = await screen.findByTestId('quickview-section-trigger-7th Floor');
+    await user.click(sectionTrigger);
     await waitFor(() => expect(screen.getByText('General Condition')).toBeInTheDocument());
     expect(screen.getByTestId('checklist-quickview')).toHaveTextContent('Not OK');
     expect(screen.getByTestId('app-brand-logo')).toBeInTheDocument();

@@ -6,6 +6,8 @@ import {
   mapChecklistToSummary,
   mapInFieldStatusToUi,
   mapItemStatusToOutcome,
+  normalizeDisplayText,
+  normalizeSectionLabel,
   resolveRouteKey,
 } from './mappers';
 
@@ -98,4 +100,36 @@ describe(mapChecklistItemToResultRow.name, () => {
     );
     expect(row.reading).toEqual({ value: 155, unit: '°F', threshold: '>170' });
   });
+
+  it('strips Exceptions note prefix and repairs mojibake in section labels', () => {
+    const mojibakeDash = '\u00e2\u0080\u0094';
+    const row = mapChecklistItemToResultRow('task-3', {
+      title: 'General Condition',
+      status: 'OK',
+      labels: [`zone:Exceptions ${mojibakeDash} 2nd Floor Bleach Plant`, 'equipment:A1 Screen'],
+    });
+    expect(row.section).toBe('2nd Floor Bleach Plant');
+  });
 });
+
+describe(normalizeDisplayText.name, () => {
+  it('repairs mojibake em dash', () => {
+    expect(normalizeDisplayText(`Exceptions ${'\u00e2\u0080\u0094'} Floor`)).toBe(
+      'Exceptions — Floor'
+    );
+  });
+});
+
+
+describe(normalizeSectionLabel.name, () => {
+  it('keeps floor name when Exceptions was concatenated', () => {
+    expect(normalizeSectionLabel('Exceptions — 2nd Floor Bleach Plant')).toBe(
+      '2nd Floor Bleach Plant'
+    );
+  });
+
+  it('normalizes bare Exceptions label', () => {
+    expect(normalizeSectionLabel('Exceptions:')).toBe('Exceptions');
+  });
+});
+

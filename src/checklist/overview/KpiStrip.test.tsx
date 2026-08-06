@@ -33,7 +33,7 @@ describe(KpiStrip.name, () => {
     expect(screen.getByTestId('kpi-withNotOk')).toHaveTextContent('5');
   });
 
-  it('uses info and success surfaces for Ongoing and Done boxes', () => {
+  it('colors Ongoing and Done counts like status badges, not the outer card', () => {
     render(
       <KpiStrip
         kpis={{ toDo: 1, ongoing: 2, done: 3, overdue: 4, withNotOk: 5 }}
@@ -42,8 +42,11 @@ describe(KpiStrip.name, () => {
       />
     );
 
-    expect(screen.getByTestId('kpi-ongoing').className).toContain('bg-info-background');
-    expect(screen.getByTestId('kpi-done').className).toContain('bg-success-background');
+    expect(screen.getByTestId('kpi-ongoing').className).toContain('bg-alternate-background');
+    expect(screen.getByTestId('kpi-done').className).toContain('bg-alternate-background');
+    expect(screen.getByTestId('kpi-count-ongoing').className).toContain('bg-info-background');
+    expect(screen.getByTestId('kpi-count-done').className).toContain('bg-success-background');
   });
 });
+
 

@@ -263,8 +263,17 @@ export class CdfChecklistService implements ChecklistService {
 
     return orderedItems
       .filter((item) => {
-        const labels = readItemProps(item).labels ?? [];
-        return !labels.some((label) => label.toLowerCase() === 'section');
+        const props = readItemProps(item);
+        const labels = props.labels ?? [];
+        if (labels.some((label) => label.toLowerCase() === 'section')) {
+          return false;
+        }
+        // Excel "Exceptions:" note placeholders are not task results.
+        const title = (props.title ?? '').trim().toLowerCase();
+        if (title === 'exceptions' || title === 'exceptions:') {
+          return false;
+        }
+        return true;
       })
       .map((item) =>
         mapChecklistItemToResultRow(

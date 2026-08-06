@@ -73,7 +73,7 @@ export function ChecklistQuickView({ checklistId, checklistName }: ChecklistQuic
             <Accordion
               key={checklistId ?? 'none'}
               type="multiple"
-              defaultValue={groups.map((section) => section.section)}
+              defaultValue={[]}
               data-testid="quickview-sections"
             >
               {groups.map((section) => (

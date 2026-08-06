@@ -20,20 +20,6 @@ describe(ChecklistQuickView.name, () => {
   });
 
   it('renders grouped OEC fixture results for a selected checklist', async () => {
-    render(
-      <Providers>
-        <ChecklistQuickView checklistId="fixture-route1" />
-      </Providers>
-    );
-
-    await waitFor(() => expect(screen.getByText('7th Floor')).toBeInTheDocument());
-    expect(screen.getByText('Diffuser Scraper')).toBeInTheDocument();
-    expect(screen.getByText('General Condition')).toBeInTheDocument();
-    expect(screen.getByText('Not OK')).toBeInTheDocument();
-    expect(screen.getAllByText(/155°F/).length).toBeGreaterThan(0);
-  });
-
-  it('collapses and expands section headers from the Excel green zones', async () => {
     const user = userEvent.setup();
     render(
       <Providers>
@@ -42,16 +28,33 @@ describe(ChecklistQuickView.name, () => {
     );
 
     const trigger = await screen.findByTestId('quickview-section-trigger-7th Floor');
-    expect(trigger).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByText('Diffuser Scraper')).toBeInTheDocument();
-
     await user.click(trigger);
-    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
+    await waitFor(() => expect(screen.getByText('Diffuser Scraper')).toBeInTheDocument());
+    expect(screen.getByText('General Condition')).toBeInTheDocument();
+    expect(screen.getByText('Not OK')).toBeInTheDocument();
+    expect(screen.getAllByText(/155°F/).length).toBeGreaterThan(0);
+  });
+
+
+  it('starts section headers collapsed and expands on click', async () => {
+    const user = userEvent.setup();
+    render(
+      <Providers>
+        <ChecklistQuickView checklistId="fixture-route1" />
+      </Providers>
+    );
+
+    const trigger = await screen.findByTestId('quickview-section-trigger-7th Floor');
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
     await user.click(trigger);
     await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
     expect(screen.getByText('Diffuser Scraper')).toBeInTheDocument();
+
+    await user.click(trigger);
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
   });
+
 
 
   it('shows an error alert when loading fails', async () => {

@@ -124,13 +124,15 @@ export function mapChecklistItemToResultRow(
   measurement?: ApmMeasurementProps | null
 ): ChecklistResultRow {
   const labels = props.labels ?? [];
-  const section = labelValue(labels, 'zone:') ?? undefined;
-  const equipment = labelValue(labels, 'equipment:') ?? undefined;
+  const sectionRaw = labelValue(labels, 'zone:');
+  const equipmentRaw = labelValue(labels, 'equipment:');
+  const section = sectionRaw ? normalizeSectionLabel(sectionRaw) : undefined;
+  const equipment = equipmentRaw ? normalizeDisplayText(equipmentRaw) : undefined;
   const outcome = mapItemStatusToOutcome(props.status);
 
   const row: ChecklistResultRow = {
     id,
-    label: props.title?.trim() || id,
+    label: normalizeDisplayText(props.title?.trim() || id),
     outcome,
   };
 
@@ -162,6 +164,40 @@ export function labelValue(labels: readonly string[], prefix: string): string | 
   const found = labels.find((label) => label.toLowerCase().startsWith(prefix.toLowerCase()));
   if (!found) return null;
   return found.slice(prefix.length).trim() || null;
+}
+
+/**
+ * Repairs common UTF-8→Windows-1252 mojibake (e.g. "â" → em dash).
+ */
+export function normalizeDisplayText(value: string): string {
+  return value
+    // UTF-8 em/en dash misread as Windows-1252 (control bytes or euro glyph)
+    .replace(/\u00e2\u0080\u0094/g, '—')
+    .replace(/\u00e2\u0080\u0093/g, '–')
+    .replace(/\u00e2\u20ac\u0094/g, '—')
+    .replace(/\u00e2\u20ac\u0093/g, '–')
+    .replace(/â/g, '—')
+    .replace(/â/g, '–')
+    .replace(/â/g, '\u2019')
+    .replace(/â/g, '\u201C')
+    .replace(/â/g, '\u201D')
+    .trim();
+}
+
+/**
+ * Excel "Exceptions:" note rows were sometimes concatenated into zone labels
+ * (e.g. "Exceptions — 2nd Floor Bleach Plant"). Keep the floor/zone name.
+ */
+export function normalizeSectionLabel(value: string): string {
+  const repaired = normalizeDisplayText(value);
+  const withoutExceptions = repaired
+    .replace(/^Exceptions\s*[:：]?\s*[—–\-:]\s*/i, '')
+    .replace(/^Exceptions\s*[:：]\s*/i, '')
+    .trim();
+  if (withoutExceptions) {
+    return withoutExceptions;
+  }
+  return repaired.replace(/[:：]\s*$/, '').trim() || repaired;
 }
 
 function parseTimestampMs(value: string | number | null | undefined): number | null {
