@@ -3,7 +3,7 @@ import { useCogniteSdk } from '@cognite/app-sdk/react';
 
 import type { ChecklistService } from '../contracts';
 import { CdfChecklistService } from '../data/CdfChecklistService';
-import { ChecklistOverviewPanel } from '../overview';
+import { ChecklistOverviewPanel, ChecklistOverviewViewModelProvider } from '../overview';
 import { ChecklistQuickView, QuickViewUiStateProvider } from '../quickview';
 import { HostSyncedStateProvider, type HostSyncedApi } from '../state/HostSyncedState';
 import { ChecklistServiceProvider } from './ChecklistServiceContext';
@@ -59,9 +59,11 @@ export function ChecklistPage({
 
   return (
     <ChecklistServiceProvider checklistService={checklistService}>
-      <HostSyncedStateProvider api={api} initialState={initialState}>
-        <ChecklistPageContent />
-      </HostSyncedStateProvider>
+      <ChecklistOverviewViewModelProvider checklistService={checklistService}>
+        <HostSyncedStateProvider api={api} initialState={initialState}>
+          <ChecklistPageContent />
+        </HostSyncedStateProvider>
+      </ChecklistOverviewViewModelProvider>
     </ChecklistServiceProvider>
   );
 }
