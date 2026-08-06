@@ -58,7 +58,7 @@ describe('App', () => {
     render(<App deps={makeDeps()} connectToHostApp={makeConnectedFn()} />);
     await waitFor(() => expect(screen.getByTestId('checklist-page')).toBeInTheDocument());
     expect(screen.getByRole('heading', { name: 'Checklist overview' })).toBeInTheDocument();
-    expect(screen.getByTestId('checklist-overview-placeholder')).toBeInTheDocument();
+    expect(screen.getByTestId('checklist-overview')).toBeInTheDocument();
     expect(screen.getByTestId('checklist-quickview')).toBeInTheDocument();
   });
 
@@ -71,8 +71,10 @@ describe('App', () => {
 
     render(<App deps={makeDeps()} connectToHostApp={makeConnectedFn(api, initialState)} />);
 
-    await waitFor(() => expect(screen.getByText('Search: Feed')).toBeInTheDocument());
-    expect(screen.getByText('Selected: fixture-route1')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('checklist-search')).toHaveValue('Feed'));
+    await waitFor(() =>
+      expect(screen.getByText('Route One - IV/Kamyr Digester/Diffuser')).toBeInTheDocument()
+    );
     await waitFor(() => expect(screen.getByText('7th Floor')).toBeInTheDocument());
     expect(screen.getByText('Diffuser Scraper')).toBeInTheDocument();
   });
