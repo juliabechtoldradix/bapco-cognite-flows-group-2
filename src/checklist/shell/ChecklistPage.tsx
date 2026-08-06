@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useCogniteSdk } from '@cognite/app-sdk/react';
 
+import ipLogo from '../../assets/ip-logo.png';
 import type { ChecklistService } from '../contracts';
 import { CdfChecklistService } from '../data/CdfChecklistService';
 import { ChecklistOverviewPanel, ChecklistOverviewViewModelProvider } from '../overview';
@@ -24,7 +25,15 @@ function ChecklistPageContent() {
     <main className="min-h-screen bg-background text-foreground" data-testid="checklist-page">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 sm:p-8">
         <header className="border-b border-border pb-4">
-          <p className="text-sm font-medium text-link-foreground">International Paper · Kamyr OEC</p>
+          <div className="mb-1 flex items-center gap-2">
+            <img
+              src={ipLogo}
+              alt="International Paper"
+              className="h-8 w-auto shrink-0"
+              data-testid="app-brand-logo"
+            />
+            <p className="text-sm font-medium text-link-foreground">Kamyr OEC</p>
+          </div>
           <h1 className="text-2xl font-semibold text-foreground">Checklist overview</h1>
           <p className="text-muted-foreground">
             Status KPIs, search, and quick view of route checklist results

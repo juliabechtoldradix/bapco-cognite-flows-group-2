@@ -1,3 +1,9 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@cognite/aura/components/accordion';
 import { Alert, AlertDescription } from '@cognite/aura/components/alert';
 import { Badge } from '@cognite/aura/components/badge';
 import {
@@ -9,7 +15,6 @@ import {
 } from '@cognite/aura/components/card';
 import { EmptyState, EmptyStateDescription, EmptyStateTitle } from '@cognite/aura/components/empty-state';
 import { Loader } from '@cognite/aura/components/loader';
-import { Separator } from '@cognite/aura/components/separator';
 
 import type { ChecklistResultRow } from '../contracts';
 import { formatOutcomeLabel, outcomeBadgeVariant } from './outcomeLabel';
@@ -64,51 +69,70 @@ export function ChecklistQuickView({ checklistId, checklistName }: ChecklistQuic
             </EmptyState>
           ) : null}
 
-          {status === 'success'
-            ? groups.map((section) => (
-                <section key={section.section} className="mb-6 last:mb-0" aria-label={section.section}>
-                  <h3 className="mb-3 text-sm font-medium text-secondary-foreground">{section.section}</h3>
-                  {section.equipmentGroups.map((equipmentGroup) => (
-                    <div
-                      key={`${section.section}-${equipmentGroup.equipment}`}
-                      className="mb-4 rounded-lg bg-alternate-background p-3 last:mb-0"
-                    >
-                      <div className="mb-2 flex flex-wrap items-baseline gap-2">
-                        <h4 className="text-sm font-medium">{equipmentGroup.equipment}</h4>
-                        {equipmentGroup.assetExternalId ? (
-                          <span className="text-xs text-muted-foreground">
-                            Asset {equipmentGroup.assetExternalId}
-                          </span>
-                        ) : null}
-                      </div>
-                      <ul className="flex flex-col gap-2">
-                        {equipmentGroup.rows.map((row) => (
-                          <li
-                            key={row.id}
-                            className="flex flex-wrap items-center justify-between gap-2 text-sm"
-                          >
-                            <span>{row.label}</span>
-                            <span className="inline-flex items-center gap-2">
-                              {row.reading ? (
-                                <span className="text-muted-foreground">
-                                  {row.reading.value}
-                                  {row.reading.unit}
-                                  {row.reading.threshold ? ` (${row.reading.threshold})` : ''}
-                                </span>
-                              ) : null}
-                              <Badge variant={outcomeBadgeVariant(row.outcome)} background>
-                                {formatOutcomeLabel(row.outcome)}
-                              </Badge>
+          {status === 'success' ? (
+            <Accordion
+              key={checklistId ?? 'none'}
+              type="multiple"
+              defaultValue={groups.map((section) => section.section)}
+              data-testid="quickview-sections"
+            >
+              {groups.map((section) => (
+                <AccordionItem
+                  key={section.section}
+                  value={section.section}
+                  data-testid={`quickview-section-${section.section}`}
+                >
+                  <AccordionTrigger
+                    className="bg-success-background font-medium text-success-foreground-on-success hover:bg-success-background hover:text-success-foreground-on-success"
+                    data-testid={`quickview-section-trigger-${section.section}`}
+                  >
+                    {section.section}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    {section.equipmentGroups.map((equipmentGroup) => (
+                      <div
+                        key={`${section.section}-${equipmentGroup.equipment}`}
+                        className="mb-4 rounded-lg bg-alternate-background p-3 last:mb-0"
+                      >
+                        <div className="mb-2 flex flex-wrap items-baseline gap-2">
+                          <h4 className="text-sm font-medium text-foreground">
+                            {equipmentGroup.equipment}
+                          </h4>
+                          {equipmentGroup.assetExternalId ? (
+                            <span className="text-xs text-muted-foreground">
+                              Asset {equipmentGroup.assetExternalId}
                             </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                  <Separator className="mt-4" />
-                </section>
-              ))
-            : null}
+                          ) : null}
+                        </div>
+                        <ul className="flex flex-col gap-2">
+                          {equipmentGroup.rows.map((row) => (
+                            <li
+                              key={row.id}
+                              className="flex flex-wrap items-center justify-between gap-2 text-sm"
+                            >
+                              <span>{row.label}</span>
+                              <span className="inline-flex items-center gap-2">
+                                {row.reading ? (
+                                  <span className="text-muted-foreground">
+                                    {row.reading.value}
+                                    {row.reading.unit}
+                                    {row.reading.threshold ? ` (${row.reading.threshold})` : ''}
+                                  </span>
+                                ) : null}
+                                <Badge variant={outcomeBadgeVariant(row.outcome)} background>
+                                  {formatOutcomeLabel(row.outcome)}
+                                </Badge>
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          ) : null}
         </CardContent>
       </Card>
     </aside>

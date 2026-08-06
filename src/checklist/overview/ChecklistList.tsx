@@ -98,7 +98,7 @@ export function ChecklistList({
               className={cn(
                 'flex w-full items-center justify-between gap-3 rounded-lg border p-3 text-left transition-colors',
                 isSelected
-                  ? 'border-primary bg-alternate-background'
+                  ? 'border-info-base bg-info-background ring-1 ring-info-base'
                   : 'border-border bg-background hover:bg-muted-background'
               )}
             >

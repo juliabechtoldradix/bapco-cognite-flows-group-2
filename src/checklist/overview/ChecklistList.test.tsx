@@ -81,8 +81,12 @@ describe(ChecklistList.name, () => {
 
     expect(screen.getByText('Route Two - Feed System')).toBeInTheDocument();
     expect(screen.getByText('Not OK')).toBeInTheDocument();
+    expect(screen.getByTestId('checklist-item-fixture-route2').className).toContain(
+      'bg-info-background'
+    );
 
     await user.click(screen.getByTestId('checklist-item-fixture-route1'));
     expect(onSelect).toHaveBeenCalledWith('fixture-route1');
   });
 });
+

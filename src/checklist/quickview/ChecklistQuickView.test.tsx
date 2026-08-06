@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
 
@@ -31,6 +32,27 @@ describe(ChecklistQuickView.name, () => {
     expect(screen.getByText('Not OK')).toBeInTheDocument();
     expect(screen.getAllByText(/155°F/).length).toBeGreaterThan(0);
   });
+
+  it('collapses and expands section headers from the Excel green zones', async () => {
+    const user = userEvent.setup();
+    render(
+      <Providers>
+        <ChecklistQuickView checklistId="fixture-route1" />
+      </Providers>
+    );
+
+    const trigger = await screen.findByTestId('quickview-section-trigger-7th Floor');
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByText('Diffuser Scraper')).toBeInTheDocument();
+
+    await user.click(trigger);
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'false'));
+
+    await user.click(trigger);
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
+    expect(screen.getByText('Diffuser Scraper')).toBeInTheDocument();
+  });
+
 
   it('shows an error alert when loading fails', async () => {
     const service: ChecklistService = {

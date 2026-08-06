@@ -29,6 +29,9 @@ describe(ChecklistPage.name, () => {
     await waitFor(() => expect(screen.getByTestId('checklist-search')).toHaveValue('Digester'));
     await waitFor(() => expect(screen.getByText('General Condition')).toBeInTheDocument());
     expect(screen.getByTestId('checklist-quickview')).toHaveTextContent('Not OK');
+    expect(screen.getByTestId('app-brand-logo')).toBeInTheDocument();
+    expect(screen.getByText('Kamyr OEC')).toBeInTheDocument();
+    expect(screen.queryByText(/International Paper ·/)).not.toBeInTheDocument();
   });
 });
 
