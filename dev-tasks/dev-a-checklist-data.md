@@ -33,14 +33,14 @@
 
 ## Tarefas
 
-- [ ] Inspecionar `ApmAppData:v13` no CDF e documentar no PR a tabela `property → uso`.
-- [ ] Implementar `CdfChecklistService` (classe + interface `ChecklistService`), DI com `CogniteClient`.
-- [ ] `getKpis()` — To Do / Ongoing / Done / Overdue + `withNotOk`.
-- [ ] `searchChecklists(query)` — preferir `instances.search` + hydrate (`dm-graph-traversal`).
-- [ ] `getResults(checklistId)` — `instances.query` Checklist → ChecklistItems (+ measurements).
-- [ ] Mapear títulos das rotas OEC ↔ checklists no training space quando existirem.
-- [ ] Manter `FixtureChecklistService` utilizável para UI local / testes sem CDF.
-- [ ] Testes: request shape, parse, erro non-OK; mappers puros.
+- [x] Inspecionar `ApmAppData:v13` no CDF e documentar no PR a tabela `property → uso`.
+- [x] Implementar `CdfChecklistService` (classe + interface `ChecklistService`), DI com `CogniteClient`.
+- [x] `getKpis()` — To Do / Ongoing / Done / Overdue + `withNotOk`.
+- [x] `searchChecklists(query)` — preferir `instances.search` + hydrate (`dm-graph-traversal`).
+- [x] `getResults(checklistId)` — `instances.query` Checklist → ChecklistItems (+ measurements).
+- [x] Mapear títulos das rotas OEC ↔ checklists no training space quando existirem.
+- [x] Manter `FixtureChecklistService` utilizável para UI local / testes sem CDF.
+- [x] Testes: request shape, parse, erro non-OK; mappers puros.
 - [ ] Abrir PR para `main` (pode mergear em qualquer ordem após Day-0).
 
 ## Cursor prompt sugerido
