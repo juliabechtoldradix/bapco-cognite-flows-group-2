@@ -37,7 +37,55 @@ describe(ChecklistPage.name, () => {
     expect(screen.getByText('Kamyr OEC')).toBeInTheDocument();
     expect(screen.queryByText(/International Paper ·/)).not.toBeInTheDocument();
   });
+
+  it('keeps overview search and selection host-synced after visiting the dashboard', async () => {
+    const user = userEvent.setup();
+    const syncInternalState = vi.fn(() => Promise.resolve(true));
+    render(
+      <CogniteSdkProvider deps={makeSdkDeps()}>
+        <ChecklistPage
+          api={{ syncInternalState }}
+          checklistService={new FixtureChecklistService()}
+          initialState={JSON.stringify({
+            searchQuery: 'Feed',
+            selectedChecklistId: 'fixture-route2',
+            activeView: 'overview',
+            periodPreset: '7d',
+          })}
+        />
+      </CogniteSdkProvider>
+    );
+
+    await waitFor(() => expect(screen.getByTestId('checklist-search')).toHaveValue('Feed'));
+    await user.click(screen.getByTestId('nav-dashboard'));
+    await waitFor(() =>
+      expect(screen.getByTestId('task-result-dashboard-stub')).toBeInTheDocument()
+    );
+    expect(screen.queryByTestId('checklist-search')).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId('nav-overview'));
+    await waitFor(() => expect(screen.getByTestId('checklist-search')).toHaveValue('Feed'));
+    expect(screen.getByTestId('checklist-item-fixture-route2')).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+
+    await user.clear(screen.getByTestId('checklist-search'));
+    await user.type(screen.getByTestId('checklist-search'), 'Digester');
+    await waitFor(() =>
+      expect(syncInternalState).toHaveBeenCalledWith(
+        expect.stringContaining('"searchQuery":"Digester"')
+      )
+    );
+    expect(syncInternalState).toHaveBeenCalledWith(
+      expect.stringContaining('"selectedChecklistId":"fixture-route2"')
+    );
+    expect(syncInternalState).toHaveBeenCalledWith(
+      expect.stringContaining('"activeView":"overview"')
+    );
+  });
 });
+
 
 function makeSdkDeps(): SdkDeps {
   return {
