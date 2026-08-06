@@ -17,6 +17,10 @@ export type ChecklistOverviewViewModelContextType = {
   searchDebounceMs: number;
 };
 
+/**
+ * Fixture fallback for isolated overview unit tests only.
+ * Production must wrap with ChecklistOverviewViewModelProvider(CdfChecklistService).
+ */
 const defaultChecklistService: ChecklistService = new FixtureChecklistService();
 
 function defaultSetTimeout(handler: () => void, timeout: number): TimeoutId {

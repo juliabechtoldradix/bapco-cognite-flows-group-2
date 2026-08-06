@@ -12,8 +12,8 @@ export type { ChecklistService } from '../contracts';
 export { CdfChecklistService } from './CdfChecklistService';
 
 /**
- * Fixture-backed service for local UI / tests without CDF.
- * Production wiring should prefer CdfChecklistService against ApmAppData v13.
+ * Fixture-backed service for unit/integration tests and local UI without CDF.
+ * Do not use in production — ChecklistPage wires CdfChecklistService via CogniteClient.
  */
 export class FixtureChecklistService implements ChecklistService {
   async getKpis(): Promise<ChecklistKpis> {

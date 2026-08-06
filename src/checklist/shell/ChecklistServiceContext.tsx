@@ -1,35 +1,26 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
 import type { ChecklistService } from '../contracts';
-import { FixtureChecklistService } from '../data/ChecklistService';
 
 export type ChecklistServiceContextType = {
   checklistService: ChecklistService;
 };
 
-const defaultContext: ChecklistServiceContextType = {
-  checklistService: new FixtureChecklistService(),
-};
-
-export const ChecklistServiceContext = createContext<ChecklistServiceContextType>(defaultContext);
+const ChecklistServiceContext = createContext<ChecklistServiceContextType | null>(null);
 
 export type ChecklistServiceProviderProps = {
-  /** Inject a service instance (tests / future CdfChecklistService). Defaults to fixtures. */
-  checklistService?: ChecklistService;
-  createChecklistService?: () => ChecklistService;
+  /** Required in production (CdfChecklistService). Tests may pass FixtureChecklistService. */
+  checklistService: ChecklistService;
   children: ReactNode;
 };
 
 export function ChecklistServiceProvider({
   checklistService,
-  createChecklistService = () => new FixtureChecklistService(),
   children,
 }: ChecklistServiceProviderProps) {
   const value = useMemo<ChecklistServiceContextType>(
-    () => ({
-      checklistService: checklistService ?? createChecklistService(),
-    }),
-    [checklistService, createChecklistService]
+    () => ({ checklistService }),
+    [checklistService]
   );
 
   return (
@@ -38,5 +29,9 @@ export function ChecklistServiceProvider({
 }
 
 export function useChecklistService(): ChecklistService {
-  return useContext(ChecklistServiceContext).checklistService;
+  const value = useContext(ChecklistServiceContext);
+  if (!value) {
+    throw new Error('useChecklistService must be used within ChecklistServiceProvider');
+  }
+  return value.checklistService;
 }
