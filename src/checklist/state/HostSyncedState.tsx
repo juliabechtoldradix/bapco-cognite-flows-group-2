@@ -9,13 +9,20 @@ import {
 
 import type { HostAppAPI } from '@cognite/app-sdk';
 
-import { parseHostSyncedState, type HostSyncedState } from '../contracts';
+import {
+  parseHostSyncedState,
+  type AppView,
+  type HostSyncedState,
+  type TaskResultPeriodPreset,
+} from '../contracts';
 
 export type HostSyncedApi = Pick<HostAppAPI, 'syncInternalState'>;
 
 export type HostSyncedStorage = HostSyncedState & {
   setSearchQuery: (searchQuery: string) => void;
   setSelectedChecklistId: (selectedChecklistId: string | null) => void;
+  setActiveView: (activeView: AppView) => void;
+  setPeriodPreset: (periodPreset: TaskResultPeriodPreset) => void;
 };
 
 const HostSyncedStateContext = createContext<HostSyncedStorage | null>(null);
@@ -33,26 +40,40 @@ export function HostSyncedStateProvider({
 }: HostSyncedStateProviderProps) {
   const [state, setState] = useState<HostSyncedState>(() => parseHostSyncedState(initialState));
 
-  const setSearchQuery = useCallback(
-    (searchQuery: string) => {
-      setState((previous) => {
-        const next = { ...previous, searchQuery };
-        void api?.syncInternalState(JSON.stringify(next));
-        return next;
-      });
+  const pushState = useCallback(
+    (next: HostSyncedState) => {
+      void api?.syncInternalState(JSON.stringify(next));
+      return next;
     },
     [api]
   );
 
+  const setSearchQuery = useCallback(
+    (searchQuery: string) => {
+      setState((previous) => pushState({ ...previous, searchQuery }));
+    },
+    [pushState]
+  );
+
   const setSelectedChecklistId = useCallback(
     (selectedChecklistId: string | null) => {
-      setState((previous) => {
-        const next = { ...previous, selectedChecklistId };
-        void api?.syncInternalState(JSON.stringify(next));
-        return next;
-      });
+      setState((previous) => pushState({ ...previous, selectedChecklistId }));
     },
-    [api]
+    [pushState]
+  );
+
+  const setActiveView = useCallback(
+    (activeView: AppView) => {
+      setState((previous) => pushState({ ...previous, activeView }));
+    },
+    [pushState]
+  );
+
+  const setPeriodPreset = useCallback(
+    (periodPreset: TaskResultPeriodPreset) => {
+      setState((previous) => pushState({ ...previous, periodPreset }));
+    },
+    [pushState]
   );
 
   const value = useMemo<HostSyncedStorage>(
@@ -63,10 +84,14 @@ export function HostSyncedStateProvider({
       periodPreset: state.periodPreset,
       setSearchQuery,
       setSelectedChecklistId,
+      setActiveView,
+      setPeriodPreset,
     }),
     [
       setSearchQuery,
       setSelectedChecklistId,
+      setActiveView,
+      setPeriodPreset,
       state.searchQuery,
       state.selectedChecklistId,
       state.activeView,
