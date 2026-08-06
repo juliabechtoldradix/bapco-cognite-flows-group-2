@@ -4,6 +4,7 @@ import type { HostAppAPI, ConnectToHostAppResult } from '@cognite/app-sdk';
 import { CogniteClient } from '@cognite/sdk';
 import type { ComponentProps } from 'react';
 
+import { FixtureChecklistService } from './checklist/data/ChecklistService';
 import App from './App';
 
 type AppDeps = NonNullable<ComponentProps<typeof App>['deps']>;
@@ -45,6 +46,8 @@ function makeLoadingDeps(): AppDeps {
 }
 
 describe('App', () => {
+  const fixtureService = new FixtureChecklistService();
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -55,7 +58,13 @@ describe('App', () => {
   });
 
   it('renders the checklist overview shell', async () => {
-    render(<App deps={makeDeps()} connectToHostApp={makeConnectedFn()} />);
+    render(
+      <App
+        deps={makeDeps()}
+        connectToHostApp={makeConnectedFn()}
+        checklistService={fixtureService}
+      />
+    );
     await waitFor(() => expect(screen.getByTestId('checklist-page')).toBeInTheDocument());
     expect(screen.getByRole('heading', { name: 'Checklist overview' })).toBeInTheDocument();
     expect(screen.getByTestId('checklist-overview')).toBeInTheDocument();
@@ -69,7 +78,13 @@ describe('App', () => {
       selectedChecklistId: 'fixture-route1',
     });
 
-    render(<App deps={makeDeps()} connectToHostApp={makeConnectedFn(api, initialState)} />);
+    render(
+      <App
+        deps={makeDeps()}
+        connectToHostApp={makeConnectedFn(api, initialState)}
+        checklistService={fixtureService}
+      />
+    );
 
     await waitFor(() => expect(screen.getByTestId('checklist-search')).toHaveValue('Feed'));
     await waitFor(() =>

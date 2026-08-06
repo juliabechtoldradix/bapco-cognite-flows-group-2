@@ -1,3 +1,8 @@
+import { useMemo } from 'react';
+import { useCogniteSdk } from '@cognite/app-sdk/react';
+
+import type { ChecklistService } from '../contracts';
+import { CdfChecklistService } from '../data/CdfChecklistService';
 import { ChecklistOverviewPanel } from '../overview';
 import { ChecklistQuickView, QuickViewUiStateProvider } from '../quickview';
 import { HostSyncedStateProvider, type HostSyncedApi } from '../state/HostSyncedState';
@@ -7,6 +12,8 @@ import { useChecklistPageViewModel } from './useChecklistPageViewModel';
 export type ChecklistPageProps = {
   api: HostSyncedApi | null;
   initialState?: string;
+  /** Test / local override. Production uses CdfChecklistService + CogniteClient. */
+  checklistService?: ChecklistService;
 };
 
 function ChecklistPageContent() {
@@ -39,9 +46,19 @@ function ChecklistPageContent() {
   );
 }
 
-export function ChecklistPage({ api, initialState }: ChecklistPageProps) {
+export function ChecklistPage({
+  api,
+  initialState,
+  checklistService: checklistServiceOverride,
+}: ChecklistPageProps) {
+  const client = useCogniteSdk();
+  const checklistService = useMemo(
+    () => checklistServiceOverride ?? new CdfChecklistService(client),
+    [checklistServiceOverride, client]
+  );
+
   return (
-    <ChecklistServiceProvider>
+    <ChecklistServiceProvider checklistService={checklistService}>
       <HostSyncedStateProvider api={api} initialState={initialState}>
         <ChecklistPageContent />
       </HostSyncedStateProvider>

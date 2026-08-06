@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from '@cognite/aura/components/alert';
 import { Card, CardContent } from '@cognite/aura/components/card';
 import { Loader } from '@cognite/aura/components/loader';
 
+import type { ChecklistService } from './checklist/contracts';
 import { ChecklistPage } from './checklist/shell/ChecklistPage';
 
 type AppApi = Pick<HostAppAPI, 'syncInternalState'>;
@@ -41,20 +42,29 @@ const errorFallback = (
   </main>
 );
 
-type AppContentProps = { api: AppApi | null; initialState?: string };
+type AppContentProps = {
+  api: AppApi | null;
+  initialState?: string;
+  checklistService?: ChecklistService;
+};
 
-function AppContent({ api, initialState }: AppContentProps) {
-  return <ChecklistPage api={api} initialState={initialState} />;
+function AppContent({ api, initialState, checklistService }: AppContentProps) {
+  return (
+    <ChecklistPage api={api} initialState={initialState} checklistService={checklistService} />
+  );
 }
 
 type AppProps = {
   deps?: ComponentProps<typeof CogniteSdkProvider>['deps'];
   connectToHostApp?: () => Promise<AppConnectResult>;
+  /** Test override. Production omits this and uses CdfChecklistService. */
+  checklistService?: ChecklistService;
 };
 
 function App({
   deps,
   connectToHostApp = deps?.connectToHostApp ?? connectToHostAppImpl,
+  checklistService,
 }: AppProps) {
   const [connection, setConnection] = useState<AppConnectResult | null>(null);
 
@@ -70,7 +80,11 @@ function App({
 
   return (
     <CogniteSdkProvider loadingFallback={loadingFallback} errorFallback={errorFallback} deps={deps}>
-      <AppContent api={connection?.api ?? null} initialState={connection?.initialState} />
+      <AppContent
+        api={connection?.api ?? null}
+        initialState={connection?.initialState}
+        checklistService={checklistService}
+      />
     </CogniteSdkProvider>
   );
 }
