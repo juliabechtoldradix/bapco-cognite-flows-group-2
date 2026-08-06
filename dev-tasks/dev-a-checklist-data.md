@@ -41,7 +41,7 @@
 - [x] Mapear títulos das rotas OEC ↔ checklists no training space quando existirem.
 - [x] Manter `FixtureChecklistService` utilizável para UI local / testes sem CDF.
 - [x] Testes: request shape, parse, erro non-OK; mappers puros.
-- [ ] Abrir PR para `main` (pode mergear em qualquer ordem após Day-0).
+- [ ] Abrir PR para `main` (branch `feat/checklist-data` já pushed — `gh` não disponível neste ambiente; abrir em https://github.com/juliabechtoldradix/bapco-cognite-flows-group-2/compare/main...feat/checklist-data).
 
 ## Cursor prompt sugerido
 
