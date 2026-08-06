@@ -41,9 +41,9 @@
 - [x] Update `ChecklistPage` layout: nav + conditional render overview/quickview vs dashboard panel.
 - [x] Ensure overview search/selection still host-sync when on overview.
 - [x] Tests: restore `activeView`/`periodPreset` from `initialState`; switching view updates `syncInternalState`.
-- [ ] Rebase on latest `main` (with A+B), fix any import-only conflicts, PR → `main`.
+- [x] Rebase on latest `main` (with A+B), fix any import-only conflicts, PR → `main`.
 
-**Branch status:** `feat/task-result-shell` — implementation commits done; **paused before rebase** until A + B land on `main`.
+**Branch status:** `feat/task-result-shell` — rebased on `main` (A+B), wired `TaskResultDashboardViewModelProvider`.
 
 ## Cursor prompt sugerido
 

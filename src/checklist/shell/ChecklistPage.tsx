@@ -8,12 +8,15 @@ import {
 
 import ipLogo from '../../assets/ip-logo.png';
 import { isAppView, type ChecklistService } from '../contracts';
-import { TaskResultDashboardPanel } from '../dashboard';
+import {
+  TaskResultDashboardPanel,
+  TaskResultDashboardViewModelProvider,
+} from '../dashboard';
 import { CdfChecklistService } from '../data/CdfChecklistService';
 import { ChecklistOverviewPanel, ChecklistOverviewViewModelProvider } from '../overview';
 import { ChecklistQuickView, QuickViewUiStateProvider } from '../quickview';
 import { HostSyncedStateProvider, type HostSyncedApi } from '../state/HostSyncedState';
-import { ChecklistServiceProvider } from './ChecklistServiceContext';
+import { ChecklistServiceProvider, useChecklistService } from './ChecklistServiceContext';
 import { useChecklistPageViewModel } from './useChecklistPageViewModel';
 
 export type ChecklistPageProps = {
@@ -24,6 +27,7 @@ export type ChecklistPageProps = {
 };
 
 function ChecklistPageContent() {
+  const checklistService = useChecklistService();
   const {
     searchQuery,
     selectedChecklistId,
@@ -80,10 +84,12 @@ function ChecklistPageContent() {
         </header>
 
         {isDashboard ? (
-          <TaskResultDashboardPanel
-            periodPreset={periodPreset}
-            onPeriodChange={onPeriodChange}
-          />
+          <TaskResultDashboardViewModelProvider checklistService={checklistService}>
+            <TaskResultDashboardPanel
+              periodPreset={periodPreset}
+              onPeriodChange={onPeriodChange}
+            />
+          </TaskResultDashboardViewModelProvider>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]">
             <ChecklistOverviewPanel

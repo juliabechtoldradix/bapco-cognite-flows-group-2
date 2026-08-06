@@ -54,11 +54,9 @@ describe(ChecklistPage.name, () => {
       </CogniteSdkProvider>
     );
 
-    await waitFor(() =>
-      expect(screen.getByTestId('task-result-dashboard-stub')).toBeInTheDocument()
-    );
-    expect(screen.getByText(/period: 30d/)).toBeInTheDocument();
-    expect(screen.getByText('Task result dashboard')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('task-result-dashboard')).toBeInTheDocument());
+    expect(screen.getByTestId('period-preset-30d')).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('heading', { name: 'Task result dashboard' })).toBeInTheDocument();
     expect(screen.queryByTestId('checklist-overview')).not.toBeInTheDocument();
   });
 
@@ -92,7 +90,7 @@ describe(ChecklistPage.name, () => {
         })
       )
     );
-    expect(screen.getByTestId('task-result-dashboard-stub')).toBeInTheDocument();
+    expect(screen.getByTestId('task-result-dashboard')).toBeInTheDocument();
 
     await user.click(screen.getByTestId('nav-overview'));
     await waitFor(() =>
@@ -128,9 +126,7 @@ describe(ChecklistPage.name, () => {
 
     await waitFor(() => expect(screen.getByTestId('checklist-search')).toHaveValue('Feed'));
     await user.click(screen.getByTestId('nav-dashboard'));
-    await waitFor(() =>
-      expect(screen.getByTestId('task-result-dashboard-stub')).toBeInTheDocument()
-    );
+    await waitFor(() => expect(screen.getByTestId('task-result-dashboard')).toBeInTheDocument());
     expect(screen.queryByTestId('checklist-search')).not.toBeInTheDocument();
 
     await user.click(screen.getByTestId('nav-overview'));
