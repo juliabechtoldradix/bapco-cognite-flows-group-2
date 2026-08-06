@@ -25,14 +25,14 @@
 
 ## Tarefas
 
-- [ ] Criar `src/checklist/state/**` — storage host-synced (seed de `initialState`, push via `syncInternalState`).
-- [ ] Atualizar `ChecklistPage` para usar host state (não `useState` local para search/selected).
-- [ ] Implementar `ChecklistQuickView` real (substituir stub) + ViewModel + loading/error/empty.
-- [ ] Wire `App.tsx`: remover welcome boilerplate; montar `ChecklistPage` dentro do `CogniteSdkProvider`.
-- [ ] DI: factory `FixtureChecklistService` até CDF existir; trocar/permitir `CdfChecklistService` quando Dev A mergear.
-- [ ] Aplicar tokens IP em `styles.css`.
-- [ ] Atualizar `App.test.tsx` para o novo shell.
-- [ ] Remover código legado fora do SPEC (`src/asset-list` etc.) se ainda existir.
+- [x] Criar `src/checklist/state/**` — storage host-synced (seed de `initialState`, push via `syncInternalState`).
+- [x] Atualizar `ChecklistPage` para usar host state (não `useState` local para search/selected).
+- [x] Implementar `ChecklistQuickView` real (substituir stub) + ViewModel + loading/error/empty.
+- [x] Wire `App.tsx`: remover welcome boilerplate; montar `ChecklistPage` dentro do `CogniteSdkProvider`.
+- [x] DI: factory `FixtureChecklistService` até CDF existir; trocar/permitir `CdfChecklistService` quando Dev A mergear.
+- [x] Aplicar tokens IP em `styles.css`.
+- [x] Atualizar `App.test.tsx` para o novo shell.
+- [x] Remover código legado fora do SPEC (`src/asset-list` etc.) se ainda existir.
 - [ ] Abrir PR para `main`.
 
 ## Cursor prompt sugerido
