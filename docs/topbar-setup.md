@@ -4,13 +4,18 @@ The Flows `use-topbar` skill requires installing `@aura/topbar` via the **shadcn
 
 ## Blocker (2026-08-06)
 
+1. Without registry config: `Unknown registry "@aura"`.
+2. After adding `components.json` registries entry  
+   `"@aura": "https://cognitedata.github.io/aura/r/{name}.json"`:
+
 ```text
 npx shadcn@latest add @aura/topbar
-→ Unknown registry "@aura". Make sure it is defined under "registries"
-  in your components.json or package.json
+→ The item at https://cognitedata.github.io/aura/r/topbar.json was not found.
 ```
 
-This repo has **no** `components.json` / Aura registry entry yet.
+Confirm the current Aura registry URL / item name with Cognite docs or the skill `IMPLEMENTATION.md` before retrying. Do **not** build a custom nav bar.
+
+`components.json` in the repo root already includes the registries stub for the next attempt.
 
 ## Inferred product defaults (for when install is unblocked)
 
@@ -27,9 +32,9 @@ From `SPEC.md`, `DESIGN.md`, and `app.json`:
 
 ## Unblock checklist
 
-1. Add Aura shadcn registry + `components.json` per Cognite Aura docs / skill `IMPLEMENTATION.md`.
-2. Run `npx shadcn@latest add @aura/topbar` (or the registry URL Cognite publishes).
+1. Verify the live Aura registry URL and topbar item name.
+2. Run `npx shadcn@latest add @aura/topbar` successfully.
 3. Compose exactly one Topbar above `ChecklistPage` content (skill RULES §12).
-4. Do **not** invent a custom nav bar if the registry install still fails — fix the registry instead.
+4. If install still fails, stop and fix the registry — no workaround header.
 
 References: `.claude/skills/use-topbar/SKILL.md`, `IMPLEMENTATION.md`, `RULES.md`.
