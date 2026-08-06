@@ -1,8 +1,14 @@
 import { useMemo } from 'react';
 import { useCogniteSdk } from '@cognite/app-sdk/react';
+import {
+  SegmentedControl,
+  SegmentedControlButton,
+  SegmentedControlList,
+} from '@cognite/aura/components/segmented-control';
 
 import ipLogo from '../../assets/ip-logo.png';
-import type { ChecklistService } from '../contracts';
+import { isAppView, type ChecklistService } from '../contracts';
+import { TaskResultDashboardPanel } from '../dashboard';
 import { CdfChecklistService } from '../data/CdfChecklistService';
 import { ChecklistOverviewPanel, ChecklistOverviewViewModelProvider } from '../overview';
 import { ChecklistQuickView, QuickViewUiStateProvider } from '../quickview';
@@ -18,8 +24,18 @@ export type ChecklistPageProps = {
 };
 
 function ChecklistPageContent() {
-  const { searchQuery, selectedChecklistId, onSearchChange, onSelectChecklist } =
-    useChecklistPageViewModel();
+  const {
+    searchQuery,
+    selectedChecklistId,
+    activeView,
+    periodPreset,
+    onSearchChange,
+    onSelectChecklist,
+    onActiveViewChange,
+    onPeriodChange,
+  } = useChecklistPageViewModel();
+
+  const isDashboard = activeView === 'dashboard';
 
   return (
     <main className="min-h-screen bg-background text-foreground" data-testid="checklist-page">
@@ -34,22 +50,53 @@ function ChecklistPageContent() {
             />
             <p className="text-sm font-medium text-link-foreground">Kamyr OEC</p>
           </div>
-          <h1 className="text-2xl font-semibold text-foreground">Checklist overview</h1>
+          <h1 className="text-2xl font-semibold text-foreground">
+            {isDashboard ? 'Task result dashboard' : 'Checklist overview'}
+          </h1>
           <p className="text-muted-foreground">
-            Status KPIs, search, and quick view of route checklist results
+            {isDashboard
+              ? 'OK vs Not OK outcomes and trends over a selected period'
+              : 'Status KPIs, search, and quick view of route checklist results'}
           </p>
+          <div className="mt-4" data-testid="app-view-nav">
+            <SegmentedControl
+              value={activeView}
+              onValueChange={(value) => {
+                if (isAppView(value)) {
+                  onActiveViewChange(value);
+                }
+              }}
+            >
+              <SegmentedControlList>
+                <SegmentedControlButton value="overview" data-testid="nav-overview">
+                  Overview
+                </SegmentedControlButton>
+                <SegmentedControlButton value="dashboard" data-testid="nav-dashboard">
+                  Dashboard
+                </SegmentedControlButton>
+              </SegmentedControlList>
+            </SegmentedControl>
+          </div>
         </header>
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]">
-          <ChecklistOverviewPanel
-            searchQuery={searchQuery}
-            onSearchChange={onSearchChange}
-            selectedId={selectedChecklistId}
-            onSelectChecklist={onSelectChecklist}
+
+        {isDashboard ? (
+          <TaskResultDashboardPanel
+            periodPreset={periodPreset}
+            onPeriodChange={onPeriodChange}
           />
-          <QuickViewUiStateProvider>
-            <ChecklistQuickView checklistId={selectedChecklistId} />
-          </QuickViewUiStateProvider>
-        </div>
+        ) : (
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]">
+            <ChecklistOverviewPanel
+              searchQuery={searchQuery}
+              onSearchChange={onSearchChange}
+              selectedId={selectedChecklistId}
+              onSelectChecklist={onSelectChecklist}
+            />
+            <QuickViewUiStateProvider>
+              <ChecklistQuickView checklistId={selectedChecklistId} />
+            </QuickViewUiStateProvider>
+          </div>
+        )}
       </div>
     </main>
   );
