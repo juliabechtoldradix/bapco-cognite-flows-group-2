@@ -20,7 +20,8 @@
     "lint:fix": "eslint . --fix --ext .js,.mjs,.cjs,.ts,.tsx",
     "deploy": "npx @cognite/cli@latest apps deploy --interactive",
     "activate": "npx @cognite/cli@latest apps activate --interactive",
-    "setup-https": "npx @cognite/cli@latest apps setup-https"
+    "setup-https": "npx @cognite/cli@latest apps setup-https",
+    "seed:oec": "node scripts/seed-oec-apm-data.mjs"
   },
   "dependencies": {
     "@cognite/aura": "^0.3.5",

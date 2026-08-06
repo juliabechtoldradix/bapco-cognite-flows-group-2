@@ -24,3 +24,9 @@ Inspected in project against data model `cdf_apm` / `ApmAppData:v13`.
 ## Seed
 
 OEC routes from `references/A Line OEC Routes.xlsx` seeded via `scripts/seed-oec-apm-data.mjs` (Excel-mapped checklist/items/edges).
+
+```bash
+npm run seed:oec
+```
+
+Requires CDF + IdP env vars documented in [`scripts/README.md`](../../../scripts/README.md).
