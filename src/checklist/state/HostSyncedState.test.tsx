@@ -54,8 +54,40 @@ describe(HostSyncedStateProvider.name, () => {
       )
     );
   });
-});
 
+  it('pushes host state when activeView or periodPreset changes', async () => {
+    const syncInternalState = vi.fn(() => Promise.resolve(true));
+    render(
+      <HostSyncedStateProvider api={{ syncInternalState }} initialState={undefined}>
+        <Probe />
+      </HostSyncedStateProvider>
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'set-view' }));
+    await waitFor(() =>
+      expect(syncInternalState).toHaveBeenCalledWith(
+        JSON.stringify({
+          searchQuery: '',
+          selectedChecklistId: null,
+          activeView: 'dashboard',
+          periodPreset: '7d',
+        })
+      )
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'set-period' }));
+    await waitFor(() =>
+      expect(syncInternalState).toHaveBeenCalledWith(
+        JSON.stringify({
+          searchQuery: '',
+          selectedChecklistId: null,
+          activeView: 'dashboard',
+          periodPreset: '24h',
+        })
+      )
+    );
+  });
+});
 
 function Probe() {
   const storage = useHostSyncedStorage();
@@ -63,11 +95,19 @@ function Probe() {
     <div>
       <span data-testid="search">{storage.searchQuery}</span>
       <span data-testid="selected">{storage.selectedChecklistId ?? '(none)'}</span>
+      <span data-testid="view">{storage.activeView}</span>
+      <span data-testid="period">{storage.periodPreset}</span>
       <button type="button" onClick={() => storage.setSearchQuery('Digester')}>
         set-search
       </button>
       <button type="button" onClick={() => storage.setSelectedChecklistId('fixture-route1')}>
         set-selected
+      </button>
+      <button type="button" onClick={() => storage.setActiveView('dashboard')}>
+        set-view
+      </button>
+      <button type="button" onClick={() => storage.setPeriodPreset('24h')}>
+        set-period
       </button>
     </div>
   );
