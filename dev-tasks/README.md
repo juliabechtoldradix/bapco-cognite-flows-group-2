@@ -11,3 +11,5 @@ Work **in parallel** from updated `main`. Own only the paths listed in your file
 | C — Shell / host / quick view | `feat/checklist-shell` | [dev-c-checklist-shell.md](./dev-c-checklist-shell.md) |
 
 Sources: `SPEC.md`, `DESIGN.md`, `references/A Line OEC Routes.xlsx`.
+
+**Status:** PRs #1 (overview), #2 (data), and #3 (shell) are merged to `main`. Production wires `CdfChecklistService`; seed with `npm run seed:oec` when the training space is empty.

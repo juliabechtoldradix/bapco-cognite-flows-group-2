@@ -21,15 +21,15 @@
 
 ## Tarefas
 
-- [ ] Substituir o stub de `ChecklistOverviewPanel` pela UI real (Aura, import por subpath).
-- [ ] `KpiStrip` — To Do, Ongoing, Done, Overdue, Not OK (`ChecklistKpis`).
-- [ ] `ChecklistSearch` — debounce (SC-002).
-- [ ] `ChecklistList` — seleção, empty / loading / error.
-- [ ] `OverviewUiState` + `useChecklistOverviewViewModel` (ViewModel sem `useState` interno; estado no storage compartilhado).
-- [ ] `ChecklistOverviewViewModelContext` com DI do `ChecklistService`.
-- [ ] Testes de view + view model (loading / success / error / empty).
-- [ ] Alinhar visual a `DESIGN.md` (sem editar `styles.css` global — tokens vêm do Dev C).
-- [ ] Abrir PR para `main`.
+- [x] Substituir o stub de `ChecklistOverviewPanel` pela UI real (Aura, import por subpath).
+- [x] `KpiStrip` — To Do, Ongoing, Done, Overdue, Not OK (`ChecklistKpis`).
+- [x] `ChecklistSearch` — debounce (SC-002).
+- [x] `ChecklistList` — seleção, empty / loading / error.
+- [x] `OverviewUiState` + `useChecklistOverviewViewModel` (ViewModel sem `useState` interno; estado no storage compartilhado).
+- [x] `ChecklistOverviewViewModelContext` com DI do `ChecklistService`.
+- [x] Testes de view + view model (loading / success / error / empty).
+- [x] Alinhar visual a `DESIGN.md` (sem editar `styles.css` global — tokens vêm do Dev C).
+- [x] Abrir PR para `main` — merged as PR #1.
 
 ## Cursor prompt sugerido
 

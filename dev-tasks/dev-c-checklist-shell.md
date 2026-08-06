@@ -33,7 +33,7 @@
 - [x] Aplicar tokens IP em `styles.css`.
 - [x] Atualizar `App.test.tsx` para o novo shell.
 - [x] Remover código legado fora do SPEC (`src/asset-list` etc.) se ainda existir.
-- [ ] Abrir PR para `main`.
+- [x] Abrir PR para `main` — merged as PR #3.
 
 ## Cursor prompt sugerido
 
