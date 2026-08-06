@@ -16,6 +16,11 @@ import {
   mapChecklistToSummary,
   type ApmMeasurementProps,
 } from '../mappers';
+import {
+  aggregateTaskResults,
+  resolvePeriodWindow,
+  type TaskResultAggregateItem,
+} from './taskResultAggregate';
 
 /** Narrow instances API used by CdfChecklistService (injectable / mockable). */
 export interface ChecklistInstancesClient {
@@ -23,6 +28,14 @@ export interface ChecklistInstancesClient {
   list: (query: unknown) => Promise<unknown>;
   search: (query: unknown) => Promise<unknown>;
 }
+
+type CdfChecklistServiceDeps = {
+  nowMs: () => number;
+};
+
+const defaultDeps: CdfChecklistServiceDeps = {
+  nowMs: () => Date.now(),
+};
 
 const CHECKLIST_VIEW = {
   type: 'view',
@@ -69,6 +82,8 @@ const MEASUREMENT_PROPS = [
 type NodeIdentity = { space: string; externalId: string };
 
 type DmNode = NodeIdentity & {
+  createdTime?: number;
+  lastUpdatedTime?: number;
   properties?: Record<string, Record<string, Record<string, unknown>>>;
   startNode?: NodeIdentity;
   endNode?: NodeIdentity;
@@ -92,9 +107,15 @@ type ListResponse = {
  */
 export class CdfChecklistService implements ChecklistService {
   private readonly instances: ChecklistInstancesClient;
+  private readonly nowMs: () => number;
 
-  constructor(client: CogniteClient | ChecklistInstancesClient) {
+  constructor(
+    client: CogniteClient | ChecklistInstancesClient,
+    overrides?: Partial<CdfChecklistServiceDeps>
+  ) {
     this.instances = toInstancesClient(client);
+    const deps = { ...defaultDeps, ...overrides };
+    this.nowMs = deps.nowMs;
   }
 
   async getKpis(): Promise<ChecklistKpis> {
@@ -169,15 +190,14 @@ export class CdfChecklistService implements ChecklistService {
   }
 
   /**
-   * Day-0 stub — zeros until Dev A implements real aggregation.
-   * Avoids shell smoke failures before feat/task-result-data lands.
+   * Aggregates ChecklistItem task results for the Task Result Dashboard.
+   * Period filter + series bucketing use node `lastUpdatedTime` (UTC), falling
+   * back to `createdTime` when lastUpdatedTime is absent — see apm-property-map.md.
    */
   async getTaskResultDashboard(period: TaskResultPeriodPreset): Promise<TaskResultDashboardData> {
-    return {
-      period,
-      breakdown: { ok: 0, notOk: 0, other: 0 },
-      series: [],
-    };
+    const nowMs = this.nowMs();
+    const items = await this.listTaskResultItemsForDashboard(period, nowMs);
+    return aggregateTaskResults(items, period, nowMs);
   }
 
   async getResults(checklistId: string): Promise<ChecklistResultRow[]> {
@@ -336,15 +356,72 @@ export class CdfChecklistService implements ChecklistService {
               { hasData: [CHECKLIST_VIEW] },
             ],
           },
-        // instances.list rejects sources[].properties in this project API version
-        sources: [{ source: CHECKLIST_VIEW }],
-      });
-      collected.push(...(page.items ?? []));
-      cursor = page.nextCursor;
-    } while (cursor);
-  } catch (error) {
-    throw toCdfError('list', error);
+          // instances.list rejects sources[].properties in this project API version
+          sources: [{ source: CHECKLIST_VIEW }],
+        });
+        collected.push(...(page.items ?? []));
+        cursor = page.nextCursor;
+      } while (cursor);
+    } catch (error) {
+      throw toCdfError('list', error);
+    }
+
+    return collected;
   }
+
+  /**
+   * Lists ChecklistItem nodes in the period window (paginated).
+   * Server filter uses `lastUpdatedTime >= window.start`; client re-filters by
+   * the resolved timestamp (lastUpdatedTime → createdTime) and countable rows.
+   */
+  private async listTaskResultItemsForDashboard(
+    period: TaskResultPeriodPreset,
+    nowMs: number
+  ): Promise<TaskResultAggregateItem[]> {
+    const window = resolvePeriodWindow(period, nowMs);
+    const collected: TaskResultAggregateItem[] = [];
+    let cursor: string | undefined;
+
+    try {
+      do {
+        const page = await this.listInstances({
+          instanceType: 'node',
+          includeTyping: true,
+          limit: 1000,
+          cursor,
+          filter: {
+            and: [
+              { equals: { property: ['node', 'space'], value: INSTANCE_SPACE } },
+              { hasData: [CHECKLIST_ITEM_VIEW] },
+              {
+                range: {
+                  property: ['node', 'lastUpdatedTime'],
+                  gte: window.startMs,
+                },
+              },
+            ],
+          },
+          sources: [{ source: CHECKLIST_ITEM_VIEW }],
+        });
+
+        for (const node of page.items ?? []) {
+          const atMs = readItemEventMs(node);
+          if (atMs === null) {
+            continue;
+          }
+          const props = readItemProps(node);
+          collected.push({
+            status: props.status,
+            atMs,
+            labels: props.labels,
+            title: props.title,
+          });
+        }
+        cursor = page.nextCursor;
+      } while (cursor);
+    } catch (error) {
+      throw toCdfError('list', error);
+    }
 
     return collected;
   }
@@ -555,6 +632,21 @@ function readItemProps(node: DmNode) {
     description: readOptionalString(props.description),
     note: readOptionalString(props.note),
   };
+}
+
+/**
+ * Prefer node lastUpdatedTime (when the result was last written), else createdTime.
+ * Values are treated as epoch milliseconds (or seconds if clearly second-scale).
+ */
+function readItemEventMs(node: DmNode): number | null {
+  return normalizeEpochMs(node.lastUpdatedTime) ?? normalizeEpochMs(node.createdTime);
+}
+
+function normalizeEpochMs(value: unknown): number | null {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return null;
+  }
+  return value < 1e12 ? value * 1000 : value;
 }
 
 function readMeasurementProps(node: DmNode): ApmMeasurementProps {

@@ -7,6 +7,9 @@ import {
   type ChecklistInstancesClient,
 } from './CdfChecklistService';
 
+/** Fixed "now": 2026-08-06T15:00:00.000Z — injected for period windows. */
+const NOW_MS = Date.parse('2026-08-06T15:00:00.000Z');
+
 describe(CdfChecklistService.name, () => {
   let instances: ChecklistInstancesClient;
   let service: CdfChecklistService;
@@ -17,15 +20,59 @@ describe(CdfChecklistService.name, () => {
       query: vi.fn(),
       search: vi.fn(),
     };
-    service = new CdfChecklistService(instances);
+    service = new CdfChecklistService(instances, { nowMs: () => NOW_MS });
   });
 
-  it('getTaskResultDashboard Day-0 stub returns zeros for the period', async () => {
-    await expect(service.getTaskResultDashboard('7d')).resolves.toEqual({
-      period: '7d',
+  it('getTaskResultDashboard lists ChecklistItems with lastUpdatedTime range and aggregates', async () => {
+    vi.mocked(instances.list).mockResolvedValue({
+      items: [
+        itemNode('i1', 'OK', Date.parse('2026-08-05T10:00:00.000Z')),
+        itemNode('i2', 'Not OK', Date.parse('2026-08-05T18:00:00.000Z')),
+        itemNode('i3', 'Yes', Date.parse('2026-08-06T08:00:00.000Z')),
+        itemNode('sec', 'Not OK', Date.parse('2026-08-05T12:00:00.000Z'), ['section']),
+      ],
+    });
+
+    const data = await service.getTaskResultDashboard('7d');
+
+    expect(data.period).toBe('7d');
+    expect(data.breakdown).toEqual({ ok: 1, notOk: 1, other: 1 });
+    expect(data.series.length).toBeGreaterThan(0);
+    expect(instances.list).toHaveBeenCalledWith(
+      expect.objectContaining({
+        filter: {
+          and: [
+            { equals: { property: ['node', 'space'], value: INSTANCE_SPACE } },
+            { hasData: [expect.objectContaining({ externalId: 'ChecklistItem', version: 'v7' })] },
+            {
+              range: {
+                property: ['node', 'lastUpdatedTime'],
+                gte: NOW_MS - 7 * 24 * 60 * 60 * 1000,
+              },
+            },
+          ],
+        },
+        sources: [{ source: expect.objectContaining({ externalId: 'ChecklistItem' }) }],
+      })
+    );
+  });
+
+  it('getTaskResultDashboard returns empty breakdown when period has no items', async () => {
+    vi.mocked(instances.list).mockResolvedValue({ items: [] });
+    await expect(service.getTaskResultDashboard('24h')).resolves.toEqual({
+      period: '24h',
       breakdown: { ok: 0, notOk: 0, other: 0 },
       series: [],
     });
+  });
+
+  it('getTaskResultDashboard throws when CDF list fails', async () => {
+    const err = new Error('boom');
+    Object.assign(err, { status: 503 });
+    vi.mocked(instances.list).mockRejectedValue(err);
+    await expect(service.getTaskResultDashboard('7d')).rejects.toThrow(
+      /CDF list failed with status 503/
+    );
   });
 
   it('getKpis aggregates status buckets and withNotOk from listed checklists', async () => {
@@ -205,16 +252,23 @@ function checklistNode(
   };
 }
 
-function itemNode(externalId: string, status: string) {
+function itemNode(
+  externalId: string,
+  status: string,
+  lastUpdatedTime?: number,
+  labels: string[] = []
+) {
   return {
     space: INSTANCE_SPACE,
     externalId,
+    lastUpdatedTime,
+    createdTime: lastUpdatedTime,
     properties: {
       cdf_apm: {
         'ChecklistItem/v7': {
           title: externalId,
           status,
-          labels: [],
+          labels,
         },
       },
     },
