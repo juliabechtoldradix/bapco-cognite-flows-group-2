@@ -65,7 +65,11 @@ Operations supervisors in the control room or office review plant checklist task
 
 ### Existing views
 
-- `cdf_apm.ApmAppData:v13` — APM App Data model used for plant checklists, tasks, and results (status KPIs, search, and quick view of results). Concrete container/view names for checklist vs task vs result are confirmed at implementation against this model version.
+- `cdf_apm.ApmAppData:v13` — APM App Data model used for plant checklists, tasks, and results (status KPIs, search, and quick view of results).
+  - `Checklist/v7` — checklist title/status/`endTime` (Overdue when due date is past and status ≠ Done); search on title/description/labels.
+  - `ChecklistItem/v7` — result rows + Not OK KPI (`status` values such as `OK` / `Not OK`), linked via edge `cdf_apm:referenceChecklistItems`.
+  - `MeasurementReading/v4` — optional numeric readings linked via `cdf_apm:referenceMeasurements`.
+  - Status mapping (InField → UI): `Ready`→To Do, `In progress`/`Ongoing`→Ongoing, `Done`→Done; Overdue derived from `endTime`.
 
 ### New views
 
