@@ -8,9 +8,12 @@ import type {
 import { OEC_ROUTE_FIXTURES } from '../fixtures/oecRoutes';
 import type { FixtureTask } from '../fixtures/oecRoutes';
 
+export type { ChecklistService } from '../contracts';
+export { CdfChecklistService } from './CdfChecklistService';
+
 /**
- * Day-0 fixture-backed service for parallel UI work.
- * Dev A replaces / extends with CdfChecklistService against ApmAppData v13.
+ * Fixture-backed service for local UI / tests without CDF.
+ * Production wiring should prefer CdfChecklistService against ApmAppData v13.
  */
 export class FixtureChecklistService implements ChecklistService {
   async getKpis(): Promise<ChecklistKpis> {
