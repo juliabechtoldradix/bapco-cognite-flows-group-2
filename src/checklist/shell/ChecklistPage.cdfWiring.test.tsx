@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { HostAppAPI } from '@cognite/app-sdk';
 import { CogniteSdkProvider } from '@cognite/app-sdk/react';
@@ -14,6 +15,7 @@ type SdkDeps = NonNullable<ComponentProps<typeof CogniteSdkProvider>['deps']>;
 
 describe('ChecklistPage CDF wiring', () => {
   it('uses CdfChecklistService against the Cognite client when no override is provided', async () => {
+    const user = userEvent.setup();
     const instances = makeInstancesClient();
     const getKpis = vi.spyOn(CdfChecklistService.prototype, 'getKpis');
     const searchChecklists = vi.spyOn(CdfChecklistService.prototype, 'searchChecklists');
@@ -38,6 +40,8 @@ describe('ChecklistPage CDF wiring', () => {
     await waitFor(() =>
       expect(screen.getAllByText('Route One - IV/Kamyr Digester/Diffuser').length).toBeGreaterThan(0)
     );
+    const sectionTrigger = await screen.findByTestId('quickview-section-trigger-7th Floor');
+    await user.click(sectionTrigger);
     await waitFor(() => expect(screen.getByText('General Condition')).toBeInTheDocument());
 
     getKpis.mockRestore();
@@ -45,6 +49,7 @@ describe('ChecklistPage CDF wiring', () => {
     getResults.mockRestore();
   });
 });
+
 
 function makeInstancesClient(): ChecklistInstancesClient {
   const checklist = {

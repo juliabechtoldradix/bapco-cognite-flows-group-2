@@ -93,10 +93,10 @@ Stub UI: Aura `EmptyState` or “Dashboard stub — Dev B” is fine. Props sign
 
 ## Tasks
 
-- [ ] Add types + host-state fields + `getTaskResultDashboard` to `contracts.ts` / tests.
-- [ ] Create `src/checklist/dashboard/` stub panel + barrel `index.ts`.
-- [ ] Update Fixture + Cdf (+ mocks in tests) so `tsc` / `vitest` stay green.
-- [ ] Open PR → `main`. **Do not start A/B/C branches until this merges.**
+- [x] Add types + host-state fields + `getTaskResultDashboard` to `contracts.ts` / tests.
+- [x] Create `src/checklist/dashboard/` stub panel + barrel `index.ts`.
+- [x] Update Fixture + Cdf (+ mocks in tests) so `tsc` / `vitest` stay green.
+- [x] Landed on `main` (Day-0 implemented directly). A/B/C may branch from updated `main`.
 
 ## Cursor prompt sugerido
 

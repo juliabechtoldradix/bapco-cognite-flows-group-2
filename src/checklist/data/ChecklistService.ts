@@ -4,6 +4,9 @@ import type {
   ChecklistResultRow,
   ChecklistService,
   ChecklistSummary,
+  TaskResultDashboardData,
+  TaskResultPeriodPreset,
+  TaskResultTimeSeriesPoint,
 } from '../contracts';
 import { OEC_ROUTE_FIXTURES } from '../fixtures/oecRoutes';
 import type { FixtureTask } from '../fixtures/oecRoutes';
@@ -92,6 +95,11 @@ export class FixtureChecklistService implements ChecklistService {
 
     return rows;
   }
+
+  /** Synthetic dashboard data for UI tests until Dev A lands real aggregation. */
+  async getTaskResultDashboard(period: TaskResultPeriodPreset): Promise<TaskResultDashboardData> {
+    return fixtureTaskResultDashboard(period);
+  }
 }
 
 function fixtureOutcome(task: FixtureTask, forceNotOk: boolean): ChecklistResultOutcome {
@@ -115,4 +123,44 @@ function fixtureReading(
     unit: task.unit,
     threshold: task.threshold ?? undefined,
   };
+}
+
+function fixtureTaskResultDashboard(period: TaskResultPeriodPreset): TaskResultDashboardData {
+  const series = fixtureSeries(period);
+  let ok = 0;
+  let notOk = 0;
+  for (const point of series) {
+    ok += point.ok;
+    notOk += point.notOk;
+  }
+  return {
+    period,
+    breakdown: { ok, notOk, other: period === '24h' ? 1 : 2 },
+    series,
+  };
+}
+
+function fixtureSeries(period: TaskResultPeriodPreset): TaskResultTimeSeriesPoint[] {
+  if (period === '24h') {
+    return [
+      { at: '2026-08-06T00:00:00.000Z', ok: 4, notOk: 1 },
+      { at: '2026-08-06T06:00:00.000Z', ok: 5, notOk: 0 },
+      { at: '2026-08-06T12:00:00.000Z', ok: 3, notOk: 2 },
+    ];
+  }
+  if (period === '30d') {
+    return [
+      { at: '2026-07-10T00:00:00.000Z', ok: 12, notOk: 3 },
+      { at: '2026-07-20T00:00:00.000Z', ok: 15, notOk: 2 },
+      { at: '2026-07-30T00:00:00.000Z', ok: 14, notOk: 4 },
+      { at: '2026-08-05T00:00:00.000Z', ok: 16, notOk: 1 },
+    ];
+  }
+  // 7d default
+  return [
+    { at: '2026-07-31T00:00:00.000Z', ok: 8, notOk: 2 },
+    { at: '2026-08-02T00:00:00.000Z', ok: 9, notOk: 1 },
+    { at: '2026-08-04T00:00:00.000Z', ok: 7, notOk: 3 },
+    { at: '2026-08-06T00:00:00.000Z', ok: 10, notOk: 2 },
+  ];
 }

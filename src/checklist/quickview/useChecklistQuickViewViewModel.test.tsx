@@ -84,6 +84,11 @@ function makeService(overrides: Partial<ChecklistService> = {}): ChecklistServic
     })),
     searchChecklists: vi.fn(async () => []),
     getResults: vi.fn(async () => []),
+    getTaskResultDashboard: vi.fn(async () => ({
+      period: '7d' as const,
+      breakdown: { ok: 0, notOk: 0, other: 0 },
+      series: [],
+    })),
     ...overrides,
   };
 }

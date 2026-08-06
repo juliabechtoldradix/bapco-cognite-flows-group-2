@@ -59,10 +59,19 @@ export function HostSyncedStateProvider({
     () => ({
       searchQuery: state.searchQuery,
       selectedChecklistId: state.selectedChecklistId,
+      activeView: state.activeView,
+      periodPreset: state.periodPreset,
       setSearchQuery,
       setSelectedChecklistId,
     }),
-    [setSearchQuery, setSelectedChecklistId, state.searchQuery, state.selectedChecklistId]
+    [
+      setSearchQuery,
+      setSelectedChecklistId,
+      state.searchQuery,
+      state.selectedChecklistId,
+      state.activeView,
+      state.periodPreset,
+    ]
   );
 
   return (

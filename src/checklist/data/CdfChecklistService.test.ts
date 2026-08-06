@@ -20,6 +20,14 @@ describe(CdfChecklistService.name, () => {
     service = new CdfChecklistService(instances);
   });
 
+  it('getTaskResultDashboard Day-0 stub returns zeros for the period', async () => {
+    await expect(service.getTaskResultDashboard('7d')).resolves.toEqual({
+      period: '7d',
+      breakdown: { ok: 0, notOk: 0, other: 0 },
+      series: [],
+    });
+  });
+
   it('getKpis aggregates status buckets and withNotOk from listed checklists', async () => {
     vi.mocked(instances.list).mockResolvedValue({
       items: [

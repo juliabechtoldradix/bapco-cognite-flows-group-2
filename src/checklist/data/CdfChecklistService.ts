@@ -6,6 +6,8 @@ import {
   type ChecklistKpis,
   type ChecklistResultRow,
   type ChecklistService,
+  type TaskResultDashboardData,
+  type TaskResultPeriodPreset,
   type ChecklistSummary,
 } from '../contracts';
 import {
@@ -164,6 +166,18 @@ export class CdfChecklistService implements ChecklistService {
         nowMs
       )
     );
+  }
+
+  /**
+   * Day-0 stub — zeros until Dev A implements real aggregation.
+   * Avoids shell smoke failures before feat/task-result-data lands.
+   */
+  async getTaskResultDashboard(period: TaskResultPeriodPreset): Promise<TaskResultDashboardData> {
+    return {
+      period,
+      breakdown: { ok: 0, notOk: 0, other: 0 },
+      series: [],
+    };
   }
 
   async getResults(checklistId: string): Promise<ChecklistResultRow[]> {

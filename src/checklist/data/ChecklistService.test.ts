@@ -38,4 +38,15 @@ describe(FixtureChecklistService.name, () => {
   it('returns empty results for unknown checklist id', async () => {
     await expect(service.getResults('missing')).resolves.toEqual([]);
   });
+
+  it('returns deterministic synthetic task-result dashboard data', async () => {
+    const data = await service.getTaskResultDashboard('7d');
+    expect(data.period).toBe('7d');
+    expect(data.breakdown.ok).toBeGreaterThan(0);
+    expect(data.breakdown.notOk).toBeGreaterThan(0);
+    expect(data.series.length).toBeGreaterThan(0);
+    await expect(service.getTaskResultDashboard('24h')).resolves.toMatchObject({ period: '24h' });
+    await expect(service.getTaskResultDashboard('30d')).resolves.toMatchObject({ period: '30d' });
+  });
 });
+

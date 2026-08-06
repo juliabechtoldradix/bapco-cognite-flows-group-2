@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import {
   DEFAULT_HOST_SYNCED_STATE,
+  isAppView,
   isChecklistStatus,
   isHostSyncedState,
+  isTaskResultPeriodPreset,
   parseHostSyncedState,
 } from './contracts';
 
@@ -16,11 +18,35 @@ describe('checklist contracts', () => {
     expect(isChecklistStatus('Ready')).toBe(false);
   });
 
-  it('validates host-synced state shape', () => {
-    expect(isHostSyncedState({ searchQuery: 'feed', selectedChecklistId: 'fixture-route2' })).toBe(
-      true
-    );
-    expect(isHostSyncedState({ searchQuery: 'feed', selectedChecklistId: null })).toBe(true);
+  it('accepts app views and period presets', () => {
+    expect(isAppView('overview')).toBe(true);
+    expect(isAppView('dashboard')).toBe(true);
+    expect(isAppView('other')).toBe(false);
+    expect(isTaskResultPeriodPreset('24h')).toBe(true);
+    expect(isTaskResultPeriodPreset('7d')).toBe(true);
+    expect(isTaskResultPeriodPreset('30d')).toBe(true);
+    expect(isTaskResultPeriodPreset('1h')).toBe(false);
+  });
+
+  it('validates full host-synced state shape', () => {
+    expect(
+      isHostSyncedState({
+        searchQuery: 'feed',
+        selectedChecklistId: 'fixture-route2',
+        activeView: 'dashboard',
+        periodPreset: '24h',
+      })
+    ).toBe(true);
+    expect(
+      isHostSyncedState({
+        searchQuery: 'feed',
+        selectedChecklistId: null,
+        activeView: 'overview',
+        periodPreset: '7d',
+      })
+    ).toBe(true);
+    // Legacy v1 payload (missing v2 fields) is not a full HostSyncedState
+    expect(isHostSyncedState({ searchQuery: 'feed', selectedChecklistId: null })).toBe(false);
     expect(isHostSyncedState({ searchQuery: 1, selectedChecklistId: null })).toBe(false);
   });
 
@@ -30,6 +56,18 @@ describe('checklist contracts', () => {
     expect(parseHostSyncedState('{"searchQuery":"dig","selectedChecklistId":"fixture-route1"}')).toEqual({
       searchQuery: 'dig',
       selectedChecklistId: 'fixture-route1',
+      activeView: 'overview',
+      periodPreset: '7d',
+    });
+    expect(
+      parseHostSyncedState(
+        '{"searchQuery":"","selectedChecklistId":null,"activeView":"dashboard","periodPreset":"30d"}'
+      )
+    ).toEqual({
+      searchQuery: '',
+      selectedChecklistId: null,
+      activeView: 'dashboard',
+      periodPreset: '30d',
     });
   });
 });

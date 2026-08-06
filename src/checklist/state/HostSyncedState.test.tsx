@@ -33,18 +33,29 @@ describe(HostSyncedStateProvider.name, () => {
     await userEvent.click(screen.getByRole('button', { name: 'set-search' }));
     await waitFor(() =>
       expect(syncInternalState).toHaveBeenCalledWith(
-        JSON.stringify({ searchQuery: 'Digester', selectedChecklistId: null })
+        JSON.stringify({
+          searchQuery: 'Digester',
+          selectedChecklistId: null,
+          activeView: 'overview',
+          periodPreset: '7d',
+        })
       )
     );
 
     await userEvent.click(screen.getByRole('button', { name: 'set-selected' }));
     await waitFor(() =>
       expect(syncInternalState).toHaveBeenCalledWith(
-        JSON.stringify({ searchQuery: 'Digester', selectedChecklistId: 'fixture-route1' })
+        JSON.stringify({
+          searchQuery: 'Digester',
+          selectedChecklistId: 'fixture-route1',
+          activeView: 'overview',
+          periodPreset: '7d',
+        })
       )
     );
   });
 });
+
 
 function Probe() {
   const storage = useHostSyncedStorage();

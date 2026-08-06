@@ -43,6 +43,9 @@ describe(useChecklistOverviewViewModel.name, () => {
       getResults: vi.fn(() => {
         assert.fail('getResults should not be called by overview view model');
       }),
+      getTaskResultDashboard: vi.fn(() => {
+        assert.fail('getTaskResultDashboard should not be called by overview view model');
+      }),
     };
 
     mockContext = {

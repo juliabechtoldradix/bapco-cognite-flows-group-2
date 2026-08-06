@@ -5,19 +5,20 @@ Parallel tracks for SPEC § **v2: Task Result Dashboard** (OK vs Not OK breakdow
 ## Merge / branch order (read this first)
 
 ```text
-1) Day-0  →  PR to main FIRST (required before A/B/C branch)
+0) Day-0  →  DONE on main (contracts + stubs)
       │
       ├─► Dev A  feat/task-result-data
       ├─► Dev B  feat/task-result-dashboard-ui     (parallel with A)
       │
       └─► Dev C  feat/task-result-shell            (code in parallel OK;
                                                    merge AFTER A and B)
-2) Join / smoke on main after C lands
+Join / smoke on main after C lands
 ```
+
 
 | Step | Branch | Owner | Task file | Merge when |
 | --- | --- | --- | --- | --- |
-| 0 | `feat/task-result-day0` | anyone / lead | [day-0-contracts.md](./day-0-contracts.md) | **First** → `main` |
+| 0 | ~~`feat/task-result-day0`~~ (done on `main`) | lead | [day-0-contracts.md](./day-0-contracts.md) | **Done** on `main` |
 | A | `feat/task-result-data` | Dev A | [dev-a-task-result-data.md](./dev-a-task-result-data.md) | After Day-0; parallel with B |
 | B | `feat/task-result-dashboard-ui` | Dev B | [dev-b-task-result-dashboard-ui.md](./dev-b-task-result-dashboard-ui.md) | After Day-0; parallel with A |
 | C | `feat/task-result-shell` | Dev C | [dev-c-task-result-shell.md](./dev-c-task-result-shell.md) | **After A + B** on `main` |

@@ -140,6 +140,13 @@ describe(ChecklistOverviewPanel.name, () => {
       ),
       searchChecklists: vi.fn(() => Promise.reject(new Error('Search failed'))),
       getResults: vi.fn(() => Promise.resolve([])),
+      getTaskResultDashboard: vi.fn(() =>
+        Promise.resolve({
+          period: '7d' as const,
+          breakdown: { ok: 0, notOk: 0, other: 0 },
+          series: [],
+        })
+      ),
     };
 
     render(
