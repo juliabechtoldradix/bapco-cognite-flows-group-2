@@ -6,7 +6,7 @@ export type ChecklistServiceContextType = {
   checklistService: ChecklistService;
 };
 
-const ChecklistServiceContext = createContext<ChecklistServiceContextType | null>(null);
+export const ChecklistServiceContext = createContext<ChecklistServiceContextType | null>(null);
 
 export type ChecklistServiceProviderProps = {
   /** Required in production (CdfChecklistService). Tests may pass FixtureChecklistService. */
