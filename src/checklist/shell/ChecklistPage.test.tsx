@@ -38,6 +38,76 @@ describe(ChecklistPage.name, () => {
     expect(screen.queryByText(/International Paper ·/)).not.toBeInTheDocument();
   });
 
+  it('restores activeView and periodPreset from initialState', async () => {
+    render(
+      <CogniteSdkProvider deps={makeSdkDeps()}>
+        <ChecklistPage
+          api={null}
+          checklistService={new FixtureChecklistService()}
+          initialState={JSON.stringify({
+            searchQuery: '',
+            selectedChecklistId: null,
+            activeView: 'dashboard',
+            periodPreset: '30d',
+          })}
+        />
+      </CogniteSdkProvider>
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('task-result-dashboard-stub')).toBeInTheDocument()
+    );
+    expect(screen.getByText(/period: 30d/)).toBeInTheDocument();
+    expect(screen.getByText('Task result dashboard')).toBeInTheDocument();
+    expect(screen.queryByTestId('checklist-overview')).not.toBeInTheDocument();
+  });
+
+  it('syncs host state when switching Overview and Dashboard', async () => {
+    const user = userEvent.setup();
+    const syncInternalState = vi.fn(() => Promise.resolve(true));
+    render(
+      <CogniteSdkProvider deps={makeSdkDeps()}>
+        <ChecklistPage
+          api={{ syncInternalState }}
+          checklistService={new FixtureChecklistService()}
+          initialState={JSON.stringify({
+            searchQuery: '',
+            selectedChecklistId: null,
+            activeView: 'overview',
+            periodPreset: '7d',
+          })}
+        />
+      </CogniteSdkProvider>
+    );
+
+    await waitFor(() => expect(screen.getByTestId('checklist-overview')).toBeInTheDocument());
+    await user.click(screen.getByTestId('nav-dashboard'));
+    await waitFor(() =>
+      expect(syncInternalState).toHaveBeenCalledWith(
+        JSON.stringify({
+          searchQuery: '',
+          selectedChecklistId: null,
+          activeView: 'dashboard',
+          periodPreset: '7d',
+        })
+      )
+    );
+    expect(screen.getByTestId('task-result-dashboard-stub')).toBeInTheDocument();
+
+    await user.click(screen.getByTestId('nav-overview'));
+    await waitFor(() =>
+      expect(syncInternalState).toHaveBeenCalledWith(
+        JSON.stringify({
+          searchQuery: '',
+          selectedChecklistId: null,
+          activeView: 'overview',
+          periodPreset: '7d',
+        })
+      )
+    );
+    expect(screen.getByTestId('checklist-overview')).toBeInTheDocument();
+  });
+
   it('keeps overview search and selection host-synced after visiting the dashboard', async () => {
     const user = userEvent.setup();
     const syncInternalState = vi.fn(() => Promise.resolve(true));

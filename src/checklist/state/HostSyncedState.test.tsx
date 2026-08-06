@@ -22,6 +22,26 @@ describe(HostSyncedStateProvider.name, () => {
     expect(screen.getByTestId('selected')).toHaveTextContent('fixture-route2');
   });
 
+  it('seeds activeView and periodPreset from initialState', () => {
+    render(
+      <HostSyncedStateProvider
+        api={null}
+        initialState={JSON.stringify({
+          searchQuery: '',
+          selectedChecklistId: null,
+          activeView: 'dashboard',
+          periodPreset: '24h',
+        })}
+      >
+        <Probe />
+      </HostSyncedStateProvider>
+    );
+
+    expect(screen.getByTestId('view')).toHaveTextContent('dashboard');
+    expect(screen.getByTestId('period')).toHaveTextContent('24h');
+  });
+
+
   it('pushes host state when search or selection changes', async () => {
     const syncInternalState = vi.fn(() => Promise.resolve(true));
     render(

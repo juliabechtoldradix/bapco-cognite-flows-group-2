@@ -37,11 +37,13 @@
 
 ## Tarefas
 
-- [ ] Extend page ViewModel / storage usage for `activeView` + `periodPreset` (no local `useState` for these — host storage only).
-- [ ] Update `ChecklistPage` layout: nav + conditional render overview/quickview vs dashboard panel.
-- [ ] Ensure overview search/selection still host-sync when on overview.
-- [ ] Tests: restore `activeView`/`periodPreset` from `initialState`; switching view updates `syncInternalState`.
+- [x] Extend page ViewModel / storage usage for `activeView` + `periodPreset` (no local `useState` for these — host storage only).
+- [x] Update `ChecklistPage` layout: nav + conditional render overview/quickview vs dashboard panel.
+- [x] Ensure overview search/selection still host-sync when on overview.
+- [x] Tests: restore `activeView`/`periodPreset` from `initialState`; switching view updates `syncInternalState`.
 - [ ] Rebase on latest `main` (with A+B), fix any import-only conflicts, PR → `main`.
+
+**Branch status:** `feat/task-result-shell` — implementation commits done; **paused before rebase** until A + B land on `main`.
 
 ## Cursor prompt sugerido
 
