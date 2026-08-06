@@ -1,28 +1,15 @@
-import type { ComponentType } from 'react';
-
-import type { ChecklistSummary } from '../contracts';
-
-export type ChecklistOverviewPanelProps = {
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  selectedId: string | null;
-  onSelectChecklist: (id: string) => void;
-  /** Optional override for tests / shell wiring; Day-0 stub ignores this. */
-  checklists?: ChecklistSummary[];
-};
-
-/**
- * Day-0 placeholder. Dev B replaces with the real overview panel.
- */
-export const ChecklistOverviewPanel: ComponentType<ChecklistOverviewPanelProps> = function ChecklistOverviewPanel(
-  props
-) {
-  const { searchQuery, selectedId } = props;
-  return (
-    <section aria-label="Checklist overview placeholder" data-testid="checklist-overview-placeholder">
-      <p>Checklist overview (Day-0 stub)</p>
-      <p>Search: {searchQuery || '(empty)'}</p>
-      <p>Selected: {selectedId ?? '(none)'}</p>
-    </section>
-  );
-};
+export { ChecklistOverviewPanel } from './ChecklistOverviewPanel';
+export type { ChecklistOverviewPanelProps } from './ChecklistOverviewPanel';
+export {
+  ChecklistOverviewViewModelContext,
+  defaultChecklistOverviewViewModelContext,
+  SEARCH_DEBOUNCE_MS,
+} from './checklistOverviewViewModelContext';
+export type { ChecklistOverviewViewModelContextType } from './checklistOverviewViewModelContext';
+export { ChecklistOverviewViewModelProvider } from './ChecklistOverviewViewModelProvider';
+export type { ChecklistOverviewViewModelProviderProps } from './ChecklistOverviewViewModelProvider';
+export { useChecklistOverviewViewModel } from './useChecklistOverviewViewModel';
+export type {
+  ChecklistOverviewViewModel,
+  ChecklistOverviewViewModelInput,
+} from './useChecklistOverviewViewModel';
