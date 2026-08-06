@@ -1,0 +1,63 @@
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+
+import { HostSyncedStateProvider, useHostSyncedStorage } from './HostSyncedState';
+
+describe(HostSyncedStateProvider.name, () => {
+  it('seeds search and selected checklist from initialState', () => {
+    render(
+      <HostSyncedStateProvider
+        api={null}
+        initialState={JSON.stringify({
+          searchQuery: 'Feed',
+          selectedChecklistId: 'fixture-route2',
+        })}
+      >
+        <Probe />
+      </HostSyncedStateProvider>
+    );
+
+    expect(screen.getByTestId('search')).toHaveTextContent('Feed');
+    expect(screen.getByTestId('selected')).toHaveTextContent('fixture-route2');
+  });
+
+  it('pushes host state when search or selection changes', async () => {
+    const syncInternalState = vi.fn(() => Promise.resolve(true));
+    render(
+      <HostSyncedStateProvider api={{ syncInternalState }} initialState={undefined}>
+        <Probe />
+      </HostSyncedStateProvider>
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'set-search' }));
+    await waitFor(() =>
+      expect(syncInternalState).toHaveBeenCalledWith(
+        JSON.stringify({ searchQuery: 'Digester', selectedChecklistId: null })
+      )
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'set-selected' }));
+    await waitFor(() =>
+      expect(syncInternalState).toHaveBeenCalledWith(
+        JSON.stringify({ searchQuery: 'Digester', selectedChecklistId: 'fixture-route1' })
+      )
+    );
+  });
+});
+
+function Probe() {
+  const storage = useHostSyncedStorage();
+  return (
+    <div>
+      <span data-testid="search">{storage.searchQuery}</span>
+      <span data-testid="selected">{storage.selectedChecklistId ?? '(none)'}</span>
+      <button type="button" onClick={() => storage.setSearchQuery('Digester')}>
+        set-search
+      </button>
+      <button type="button" onClick={() => storage.setSelectedChecklistId('fixture-route1')}>
+        set-selected
+      </button>
+    </div>
+  );
+}

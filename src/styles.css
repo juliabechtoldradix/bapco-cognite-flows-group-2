@@ -4,6 +4,37 @@
 
 :root {
   --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-space-grotesk: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-source-code-pro: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
+
+  /* International Paper brand overrides — keep aligned with DESIGN.md YAML */
+  --background: #ffffff;
+  --alternate-background: #f9fafa;
+  --card-background: #f9fafa;
+  --muted-background: #f1f3f5;
+  --neutral: #f1f3f5;
+  --foreground: #15191e;
+  --secondary-foreground: #40464a;
+  --muted-foreground: #6d767e;
+  --primary-background: #006963;
+  --primary-background-hover: #005550;
+  --foreground-on-primary: #ffffff;
+  --link-foreground: #00ab5f;
+  --secondary-background: #e8eaec;
+  --secondary-background-hover: #d4d7d9;
+  --border: #e8eaec;
+  --border-emphasized: #d4d7d9;
+  --ring: #4a9b94;
+  --ring-muted: #a3d0cc;
+  --info-base: #61c4db;
+  --info-background: #c5e8f0;
+  --info-foreground-on-info: #0d5a6b;
+  --success-background: #aed49a;
+  --success-foreground: #00ab5f;
+  --success-foreground-on-success: #006963;
+  --warning-background: #fcbd44;
+  --warning-foreground-on-warning: #5a4000;
+  --destructive-background: #fccad2;
+  --destructive-foreground-on-critical: #8d081f;
 }

@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { HostAppAPI, ConnectToHostAppResult } from '@cognite/app-sdk';
 import { CogniteClient } from '@cognite/sdk';
@@ -8,7 +7,6 @@ import type { ComponentProps } from 'react';
 import App from './App';
 
 type AppDeps = NonNullable<ComponentProps<typeof App>['deps']>;
-
 type AppApi = Pick<HostAppAPI, 'syncInternalState'>;
 
 function makeApi(): AppApi {
@@ -17,8 +15,8 @@ function makeApi(): AppApi {
   };
 }
 
-function makeConnectedFn(api: AppApi = makeApi()) {
-  return vi.fn(() => Promise.resolve({ api }));
+function makeConnectedFn(api: AppApi = makeApi(), initialState?: string) {
+  return vi.fn(() => Promise.resolve({ api, initialState }));
 }
 
 function makeDeps(): AppDeps {
@@ -39,7 +37,9 @@ function makeDeps(): AppDeps {
 
 function makeLoadingDeps(): AppDeps {
   return {
-    connectToHostApp: vi.fn<AppDeps['connectToHostApp']>(() => new Promise<ConnectToHostAppResult>(() => undefined)),
+    connectToHostApp: vi.fn<AppDeps['connectToHostApp']>(
+      () => new Promise<ConnectToHostAppResult>(() => undefined)
+    ),
     createClient: vi.fn<AppDeps['createClient']>((config) => new CogniteClient(config)),
   };
 }
@@ -54,47 +54,28 @@ describe('App', () => {
     expect(screen.getByText('Loading project...')).toBeInTheDocument();
   });
 
-  it('renders splash with deployment targets and checklist copy', async () => {
+  it('renders the checklist overview shell', async () => {
     render(<App deps={makeDeps()} connectToHostApp={makeConnectedFn()} />);
-    await waitFor(() => expect(screen.getByText('Welcome to Flows custom apps')).toBeInTheDocument());
-    expect(screen.getByText('App deployment checklist')).toBeInTheDocument();
-    expect(screen.getByText('Plan')).toBeInTheDocument();
-    expect(screen.getByText('Explore')).toBeInTheDocument();
-    expect(screen.getByText('Deploy')).toBeInTheDocument();
-    expect(screen.getByText('Support')).toBeInTheDocument();
-    expect(screen.getByText('Help & feedback')).toBeInTheDocument();
-    expect(screen.getByText('Your app will deploy to')).toBeInTheDocument();
-    expect(screen.getByText('org')).toBeInTheDocument();
-    expect(screen.getByText('and project')).toBeInTheDocument();
-    expect(screen.getByText('radix')).toBeInTheDocument();
-    expect(screen.getByText('radix-dev')).toBeInTheDocument();
-    expect(screen.getAllByText(/SPEC\.md/).length).toBeGreaterThan(0);
-    expect(screen.getByText(/apps deploy --interactive/)).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId('checklist-page')).toBeInTheDocument());
+    expect(screen.getByRole('heading', { name: 'Checklist overview' })).toBeInTheDocument();
+    expect(screen.getByTestId('checklist-overview')).toBeInTheDocument();
+    expect(screen.getByTestId('checklist-quickview')).toBeInTheDocument();
   });
 
-  it('syncs internal state when the open step changes', async () => {
+  it('restores host-synced search and selected checklist into the shell', async () => {
     const api = makeApi();
-    render(<App deps={makeDeps()} connectToHostApp={makeConnectedFn(api)} />);
-    await waitFor(() => expect(screen.getByText('App deployment checklist')).toBeInTheDocument());
+    const initialState = JSON.stringify({
+      searchQuery: 'Feed',
+      selectedChecklistId: 'fixture-route1',
+    });
 
-    await userEvent.click(screen.getByText('Explore'));
+    render(<App deps={makeDeps()} connectToHostApp={makeConnectedFn(api, initialState)} />);
 
-    expect(api.syncInternalState).toHaveBeenCalledWith(
-      JSON.stringify({ openStep: 'Explore' })
-    );
-  });
-
-  it('restores the open step from initial state', async () => {
-    const api = makeApi();
-    render(<App
-      deps={makeDeps()}
-      connectToHostApp={() => Promise.resolve({ api, initialState: JSON.stringify({ openStep: 'Deploy' }) })}
-    />);
-    await waitFor(() => expect(screen.getByText('App deployment checklist')).toBeInTheDocument());
-
+    await waitFor(() => expect(screen.getByTestId('checklist-search')).toHaveValue('Feed'));
     await waitFor(() =>
-      expect(screen.getByRole('button', { name: /deploy/i })).toHaveAttribute('aria-expanded', 'true')
+      expect(screen.getByText('Route One - IV/Kamyr Digester/Diffuser')).toBeInTheDocument()
     );
-    expect(screen.getByRole('button', { name: /plan/i })).toHaveAttribute('aria-expanded', 'false');
+    await waitFor(() => expect(screen.getByText('7th Floor')).toBeInTheDocument());
+    expect(screen.getByText('Diffuser Scraper')).toBeInTheDocument();
   });
 });
