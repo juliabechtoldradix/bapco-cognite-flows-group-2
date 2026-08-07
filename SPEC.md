@@ -48,7 +48,8 @@ Operations supervisors in the control room or office review plant checklist task
 
 - **In scope (v1):** Checklist KPIs by status / Not OK, overview search, and quick view of checklist results.
 - **In scope (v2):** Task Result Dashboard — OK vs Not OK outcome breakdown and time-series KPIs over a defined period (see [v2](#v2-task-result-dashboard) below). Parallel delivery plan: [`dev-tasks/v2/`](./dev-tasks/v2/).
-- **Out of scope (v1/v2):** Automated or configurable alerts/notifications (e.g. on Not OK or checklist completed); customizable recipients, triggers, and notification formats (candidate for a later release).
+- **In scope (v3):** In-app Alerts and Notifications — bell control + popup feed derived from existing checklist/result reads (see [v3](#v3-alerts-and-notifications) below).
+- **Out of scope (v3):** Sending real external notifications (email, SMS, push, Fusion agent messages); CDF data-model changes or new views/spaces for notification storage; full admin UX for customizable recipients / triggers / formats (product ideal for a later release — v3 may surface fixed trigger types in the UI only).
 - Cognite Core Assets listing (`cdf_cdm.CogniteAsset`) from the previous SPEC is not part of this feature.
 - Exact APM property/view names for status and Not OK are defined when the `ApmAppData` v13 model is inspected at implementation time; product behavior uses the status labels above.
 - `{group_number}` in the instance space is an app configuration constant (training group), not user-editable UI.
@@ -99,7 +100,55 @@ Supervisors need more than a single checklist quick view: they need to see how t
 
 - Outcome categories align with v1 result semantics (`OK` / `Not OK` and related mapped statuses).
 - Exact period presets (e.g. last shift / 24h / 7d) and chart presentation are decided at implementation planning; product intent is historical trend of task outcomes, not checklist-level status KPIs alone.
-- Alerts and notifications remain out of scope for v2.
+- Alerts and notifications remain out of scope for v2 (delivered in v3 as in-app UI only).
+
+---
+
+## v3: Alerts and Notifications
+
+Planned follow-on from the Use Case Activity brief (Foundations & project setup) — **Alerts and Notifications**. Builds on v1/v2 checklist reads; does not replace overview or the Task Result Dashboard.
+
+### Context
+
+Supervisors want timely awareness when checklists receive **Not OK** results or are **completed**, without leaving the app. The Use Case Activity ideal includes configurable recipients, triggers, and formats; **v3 delivers the in-app notification experience only** — no outbound delivery and no CDF schema changes.
+
+### User Stories
+
+1. As an operations supervisor, I want a bell control in the app chrome, so that I can open my notification list without leaving the current view.
+2. As an operations supervisor, I want to see in-app notifications when a checklist has a Not OK result or is completed, so that I can prioritize follow-up before handover.
+3. As an operations supervisor, I want the notification popup to show a clear empty or loading state when there is nothing to show or data is still loading, so that I know the feed is working.
+
+### Acceptance Scenarios
+
+- Given the app shell is shown, when the user views the header/chrome, then a bell (notification) button is visible.
+- Given the user clicks the bell button, when the popup opens, then a list of in-app notifications is shown (or an empty state if none apply).
+- Given checklists with Not OK results exist (from existing APM reads), when notifications are derived, then the feed includes items reflecting Not OK checklist activity.
+- Given checklists in Done / completed status exist, when notifications are derived, then the feed includes items reflecting checklist completion.
+- Given the user clicks the bell again (or dismisses the popup), when the popup closes, then the previous page view remains unchanged.
+- Given notification data is loading or fails to load, when the popup is open, then a loading or error state is shown (no silent blank failure).
+
+### Functional Requirements
+
+- FR-V3-001: System MUST provide a bell icon button in the app UI that opens a popup (popover/panel) listing in-app notifications.
+- FR-V3-002: System MUST derive notification items from **existing** checklist/result reads already used by v1/v2 (e.g. Not OK presence, Done/completed status) — **no new CDF views, spaces, or data-model changes**.
+- FR-V3-003: System MUST support at least these fixed trigger types in the feed: checklist has a Not OK result; checklist is completed (Done).
+- FR-V3-004: System MUST NOT send external notifications (email, SMS, push, webhooks, Fusion agent messages, or similar) in v3.
+- FR-V3-005: System MUST show loading, error, and empty states for the notification popup.
+- FR-V3-006: System MUST present the bell + popup using Aura primitives and International Paper brand tokens from `DESIGN.md`.
+- FR-V3-007: If popup open/closed or “read” markers affect what the user expects after reload/share, that state MUST be host-synced via `syncInternalState` / `initialState`; purely transient open/close may stay local.
+
+### Success Criteria
+
+- SC-V3-001: Supervisors can open the notification popup from a bell control without leaving the Fusion-hosted app.
+- SC-V3-002: The popup surfaces Not OK and completed-checklist style notifications derived from current APM data (or a documented fixture/synthetic feed for demos when live data is empty).
+- SC-V3-003: No external notification is sent as part of v3 behavior.
+
+### Clarifications (v3)
+
+- **No data-model changes:** do not add notification/alert views, edges, or instance types; do not write notification instances to CDF for v3.
+- **No real outbound delivery:** the “automated notifications” capability from the Use Case Activity brief is represented **in-app only** (bell + popup). Customizable recipients, triggers, and formats remain a later product step.
+- Notification copy and ranking (e.g. newest first, cap on list length) are decided at implementation; trigger semantics must stay aligned with v1 status / Not OK mapping.
+- Selecting a notification may optionally navigate or select the related checklist in the overview (nice-to-have); not required for v3 MVP if the feed is read-only.
 
 ---
 
@@ -108,16 +157,17 @@ Supervisors need more than a single checklist quick view: they need to see how t
 ### Existing views
 
 - `cdf_apm.ApmAppData:v13` — APM App Data model used for plant checklists, tasks, and results (status KPIs, search, and quick view of results).
-  - `Checklist/v7` — checklist title/status/`endTime` (Overdue when due date is past and status ≠ Done); search on title/description/labels.
-  - `ChecklistItem/v7` — result rows + Not OK KPI (`status` values such as `OK` / `Not OK`), linked via edge `cdf_apm:referenceChecklistItems`.
+  - `Checklist/v7` — checklist title/status/`endTime` (Overdue when due date is past and status ≠ Done); search on title/description/labels; **v3** completion notifications derived from Done/completed status.
+  - `ChecklistItem/v7` — result rows + Not OK KPI (`status` values such as `OK` / `Not OK`), linked via edge `cdf_apm:referenceChecklistItems`; **v3** Not OK notifications derived from existing Not OK signals (same reads as v1 KPIs / results).
   - `MeasurementReading/v4` — optional numeric readings linked via `cdf_apm:referenceMeasurements`.
   - Status mapping (InField → UI): `Ready`→To Do, `In progress`/`Ongoing`→Ongoing, `Done`→Done; Overdue derived from `endTime`.
 
 ### New views
 
-- None.
+- None. **v3 must not introduce new views** (notifications are client-side / in-app only).
 
 ### Spaces
 
 - `cdf_apm` — APM App Data view/model space (read).
 - Instance space — `bapco-flows-training-group-{group_number}` (read; `{group_number}` is the app’s configured training group id).
+- **v3:** no additional spaces for alerts/notifications.
