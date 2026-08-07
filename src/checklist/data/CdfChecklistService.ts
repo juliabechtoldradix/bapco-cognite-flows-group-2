@@ -18,6 +18,7 @@ import {
   type ApmMeasurementProps,
 } from '../mappers';
 
+import { deriveInAppNotifications } from './deriveInAppNotifications';
 import {
   aggregateTaskResults,
   resolvePeriodWindow,
@@ -202,9 +203,38 @@ export class CdfChecklistService implements ChecklistService {
     return aggregateTaskResults(items, period, nowMs);
   }
 
-  /** Day-0 stub — Dev A replaces with derivation from existing APM reads. */
+  /**
+   * Derives in-app notifications from existing Checklist + Not OK reads (no new
+   * views, no outbound send). See deriveInAppNotifications + apm-property-map.md.
+   */
   async listInAppNotifications(): Promise<InAppNotification[]> {
-    return [];
+    const nodes = await this.listAllChecklists();
+    if (nodes.length === 0) {
+      return [];
+    }
+
+    const notOkByChecklist = await this.loadNotOkFlags(
+      nodes.map((node) => ({ space: node.space, externalId: node.externalId }))
+    );
+    const nowMs = this.nowMs();
+
+    return deriveInAppNotifications(
+      nodes.map((node) => {
+        const summary = mapChecklistToSummary(
+          node.externalId,
+          readChecklistProps(node),
+          notOkByChecklist.has(node.externalId),
+          nowMs
+        );
+        return {
+          id: summary.id,
+          name: summary.name,
+          status: summary.status,
+          hasNotOk: summary.hasNotOk,
+          eventMs: readNodeEventMs(node) ?? nowMs,
+        };
+      })
+    );
   }
 
   async getResults(checklistId: string): Promise<ChecklistResultRow[]> {
@@ -646,6 +676,10 @@ function readItemProps(node: DmNode) {
  * Values are treated as epoch milliseconds (or seconds if clearly second-scale).
  */
 function readItemEventMs(node: DmNode): number | null {
+  return readNodeEventMs(node);
+}
+
+function readNodeEventMs(node: DmNode): number | null {
   return normalizeEpochMs(node.lastUpdatedTime) ?? normalizeEpochMs(node.createdTime);
 }
 

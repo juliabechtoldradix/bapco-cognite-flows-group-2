@@ -26,6 +26,19 @@ Inspected in project against data model `cdf_apm` / `ApmAppData:v13`.
 - Series: hourly buckets for `24h`, daily buckets for `7d` / `30d` (UTC bucket starts as ISO strings).
 - Empty period → `{ ok: 0, notOk: 0, other: 0 }` and `series: []`.
 
+## In-app notifications derivation (v3 / Dev A)
+
+Client-side only — reuses checklist list + Not OK edge query (same as KPIs). **No new views, no CDF writes, no outbound send.**
+
+| Signal | Source | Feed item |
+| --- | --- | --- |
+| Not OK | Checklist has ≥1 Not OK item (`isNotOkItemStatus` / `hasNotOk`) | `id: notOk:{checklistId}`, `trigger: 'notOk'` |
+| Completed | UI status `Done` (InField `Done` / `completed`) | `id: completed:{checklistId}`, `trigger: 'completed'` |
+| Ranking | Checklist node `lastUpdatedTime` (fallback `createdTime`) → `createdAt` ISO | Newest first; cap **50** |
+| Empty | No Not OK and no Done checklists | `[]` (success, not an error) |
+
+A Done checklist that also has Not OK results emits **both** items.
+
 ## Instance space
 
 - `bapco-flows-training-group-2`

@@ -102,7 +102,7 @@ export class FixtureChecklistService implements ChecklistService {
     return fixtureTaskResultDashboard(period);
   }
 
-  /** Synthetic in-app notifications for UI tests until Dev A lands real derivation. */
+  /** Synthetic in-app notifications for UI tests (deterministic OEC-shaped feed). */
   async listInAppNotifications(): Promise<InAppNotification[]> {
     return fixtureInAppNotifications();
   }
