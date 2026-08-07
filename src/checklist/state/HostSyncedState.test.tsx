@@ -146,6 +146,83 @@ describe(HostSyncedStateProvider.name, () => {
       )
     );
   });
+
+  it('seeds readNotificationIds from initialState', () => {
+    render(
+      <HostSyncedStateProvider
+        api={null}
+        initialState={JSON.stringify({
+          searchQuery: '',
+          selectedChecklistId: null,
+          activeView: 'overview',
+          periodPreset: '7d',
+          readNotificationIds: ['notOk:fixture-route1', 'completed:fixture-route3'],
+        })}
+      >
+        <Probe />
+      </HostSyncedStateProvider>
+    );
+
+    expect(screen.getByTestId('read-ids')).toHaveTextContent(
+      'notOk:fixture-route1,completed:fixture-route3'
+    );
+  });
+
+  it('pushes host state when markNotificationRead appends a new id', async () => {
+    const syncInternalState = vi.fn(() => Promise.resolve(true));
+    render(
+      <HostSyncedStateProvider
+        api={{ syncInternalState }}
+        initialState={JSON.stringify({
+          searchQuery: '',
+          selectedChecklistId: null,
+          activeView: 'overview',
+          periodPreset: '7d',
+          readNotificationIds: ['notOk:fixture-route1'],
+        })}
+      >
+        <Probe />
+      </HostSyncedStateProvider>
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'mark-read' }));
+    await waitFor(() =>
+      expect(syncInternalState).toHaveBeenCalledWith(
+        JSON.stringify({
+          searchQuery: '',
+          selectedChecklistId: null,
+          activeView: 'overview',
+          periodPreset: '7d',
+          readNotificationIds: ['notOk:fixture-route1', 'completed:fixture-route3'],
+        })
+      )
+    );
+    expect(screen.getByTestId('read-ids')).toHaveTextContent(
+      'notOk:fixture-route1,completed:fixture-route3'
+    );
+  });
+
+  it('does not sync when markNotificationRead is called for an already-read id', async () => {
+    const syncInternalState = vi.fn(() => Promise.resolve(true));
+    render(
+      <HostSyncedStateProvider
+        api={{ syncInternalState }}
+        initialState={JSON.stringify({
+          searchQuery: '',
+          selectedChecklistId: null,
+          activeView: 'overview',
+          periodPreset: '7d',
+          readNotificationIds: ['completed:fixture-route3'],
+        })}
+      >
+        <Probe />
+      </HostSyncedStateProvider>
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'mark-read' }));
+    expect(syncInternalState).not.toHaveBeenCalled();
+    expect(screen.getByTestId('read-ids')).toHaveTextContent('completed:fixture-route3');
+  });
 });
 
 function Probe() {
@@ -156,6 +233,7 @@ function Probe() {
       <span data-testid="selected">{storage.selectedChecklistId ?? '(none)'}</span>
       <span data-testid="view">{storage.activeView}</span>
       <span data-testid="period">{storage.periodPreset}</span>
+      <span data-testid="read-ids">{storage.readNotificationIds.join(',')}</span>
       <button type="button" onClick={() => storage.setSearchQuery('Digester')}>
         set-search
       </button>
@@ -167,6 +245,12 @@ function Probe() {
       </button>
       <button type="button" onClick={() => storage.setPeriodPreset('24h')}>
         set-period
+      </button>
+      <button
+        type="button"
+        onClick={() => storage.markNotificationRead('completed:fixture-route3')}
+      >
+        mark-read
       </button>
     </div>
   );

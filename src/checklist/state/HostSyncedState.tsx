@@ -23,6 +23,8 @@ export type HostSyncedStorage = HostSyncedState & {
   setSelectedChecklistId: (selectedChecklistId: string | null) => void;
   setActiveView: (activeView: AppView) => void;
   setPeriodPreset: (periodPreset: TaskResultPeriodPreset) => void;
+  /** Append-only mark-read (no duplicates). Skips sync when already present. */
+  markNotificationRead: (notificationId: string) => void;
 };
 
 const HostSyncedStateContext = createContext<HostSyncedStorage | null>(null);
@@ -76,6 +78,21 @@ export function HostSyncedStateProvider({
     [pushState]
   );
 
+  const markNotificationRead = useCallback(
+    (notificationId: string) => {
+      setState((previous) => {
+        if (previous.readNotificationIds.includes(notificationId)) {
+          return previous;
+        }
+        return pushState({
+          ...previous,
+          readNotificationIds: [...previous.readNotificationIds, notificationId],
+        });
+      });
+    },
+    [pushState]
+  );
+
   const value = useMemo<HostSyncedStorage>(
     () => ({
       searchQuery: state.searchQuery,
@@ -87,12 +104,14 @@ export function HostSyncedStateProvider({
       setSelectedChecklistId,
       setActiveView,
       setPeriodPreset,
+      markNotificationRead,
     }),
     [
       setSearchQuery,
       setSelectedChecklistId,
       setActiveView,
       setPeriodPreset,
+      markNotificationRead,
       state.searchQuery,
       state.selectedChecklistId,
       state.activeView,
