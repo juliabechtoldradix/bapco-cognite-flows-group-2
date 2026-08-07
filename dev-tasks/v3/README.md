@@ -2,29 +2,29 @@
 
 Parallel tracks for SPEC § **v3: Alerts and Notifications** (in-app bell + popup feed derived from existing checklist/result reads).
 
-**Status: In progress** — Day-0 done on `main`; A/B/C not started. Join checklist: [join-final.md](./join-final.md).
+**Status: Done** — Day-0 + A/B/C merged to `main` (PRs #7–#9). Join checklist: [join-final.md](./join-final.md).
 
-## Merge / branch order
+## Merge / branch order (historical)
 
 ```text
 0) Day-0  →  DONE on main (contracts + stubs)
       │
-      ├─► Dev A  feat/alerts-data              (parallel with B)
-      ├─► Dev B  feat/alerts-notifications-ui  (parallel with A)
+      ├─► Dev A  feat/alerts-data              → PR #7
+      ├─► Dev B  feat/alerts-notifications-ui  → PR #8
       │
-      └─► Dev C  feat/alerts-shell             (after A+B rebase)
+      └─► Dev C  feat/alerts-shell             → PR #9 (after A+B)
 Join / smoke on main after C lands                 → join-final
 ```
 
 | Step | Branch | Owner | Task file | Merge when |
 | --- | --- | --- | --- | --- |
 | 0 | ~~`feat/alerts-day0`~~ | lead | [day-0-contracts.md](./day-0-contracts.md) | **Done** on `main` |
-| A | `feat/alerts-data` | Dev A | [dev-a-alerts-data.md](./dev-a-alerts-data.md) | After Day-0; parallel with B |
-| B | `feat/alerts-notifications-ui` | Dev B | [dev-b-alerts-notifications-ui.md](./dev-b-alerts-notifications-ui.md) | After Day-0; parallel with A |
-| C | `feat/alerts-shell` | Dev C | [dev-c-alerts-shell.md](./dev-c-alerts-shell.md) | **LAST** (rebase after A+B) |
-| Join | — | lead / any | [join-final.md](./join-final.md) | After C on `main` |
+| A | `feat/alerts-data` | Dev A | [dev-a-alerts-data.md](./dev-a-alerts-data.md) | **Done** (PR #7) |
+| B | `feat/alerts-notifications-ui` | Dev B | [dev-b-alerts-notifications-ui.md](./dev-b-alerts-notifications-ui.md) | **Done** (PR #8) |
+| C | `feat/alerts-shell` | Dev C | [dev-c-alerts-shell.md](./dev-c-alerts-shell.md) | **Done** (PR #9) |
+| Join | — | lead / any | [join-final.md](./join-final.md) | **Done** |
 
-### Why this avoids merge conflicts
+### Why this avoided merge conflicts
 
 | Area | Owner only |
 | --- | --- |

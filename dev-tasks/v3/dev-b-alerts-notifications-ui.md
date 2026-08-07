@@ -37,11 +37,11 @@
 
 ## Tarefas
 
-- [ ] Replace stub `NotificationsBell` with real UI + ViewModel (no `useState` inside the VM hook; shared storage/provider for load + popup-open state).
-- [ ] Wire `listInAppNotifications()` via injected service; show loading/error/empty correctly.
-- [ ] Tests: loading / success / error / empty; open/close popup; mark-read calls `onMarkRead`; unread badge behavior if implemented.
-- [ ] Use Fixture (or mock service) in tests — do not call live CDF.
-- [ ] PR → `main`.
+- [x] Replace stub `NotificationsBell` with real UI + ViewModel (no `useState` inside the VM hook; shared storage/provider for load + popup-open state).
+- [x] Wire `listInAppNotifications()` via injected service; show loading/error/empty correctly.
+- [x] Tests: loading / success / error / empty; open/close popup; mark-read calls `onMarkRead`; unread badge behavior if implemented.
+- [x] Use Fixture (or mock service) in tests — do not call live CDF.
+- [x] PR → `main` — PR #8.
 
 ## Cursor prompt sugerido
 

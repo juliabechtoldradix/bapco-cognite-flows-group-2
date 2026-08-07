@@ -35,10 +35,17 @@ Confirm ApmAppData checklist data exists before demoing the Fusion app.
    - [ ] Changing period (`24h` / `7d` / `30d`) updates the series; reload restores `activeView` + `periodPreset` (FR-V2-003, SC-V2-002)
    - [ ] Loading / error / empty states appear as expected (FR-V2-004)
 
-5. **If KPIs stay at zero** after seed: check IdP credentials, space ACL, and that `CdfChecklistService` is running (no `checklistService` prop override in production).
+5. **In-app notifications** (v3) — bell in the app chrome (Overview and Dashboard):
 
-6. **If the dashboard shows all zeros** but checklist items exist: period filtering uses ChecklistItem node `lastUpdatedTime` (fallback `createdTime`) in UTC — see [`src/checklist/data/apm-property-map.md`](../src/checklist/data/apm-property-map.md). Stale seed timestamps outside the selected window (`24h` / `7d` / `30d`) will correctly yield an empty breakdown; try `30d`, re-seed, or touch/update items so `lastUpdatedTime` falls in-window.
+   - [ ] Bell is visible; opening the popup lists Not OK and/or completed items when data exists (SC-V3-001 / SC-V3-002)
+   - [ ] Loading / error / empty states appear in the open popup as expected (FR-V3-005)
+   - [ ] Marking an item read survives reload / shared URL via `readNotificationIds` (FR-V3-007)
+   - [ ] No external notification is sent (FR-V3-004 / SC-V3-003) — feed is derived client-side from existing Checklist reads (see [`apm-property-map.md`](../src/checklist/data/apm-property-map.md))
+
+6. **If KPIs stay at zero** after seed: check IdP credentials, space ACL, and that `CdfChecklistService` is running (no `checklistService` prop override in production).
+
+7. **If the dashboard shows all zeros** but checklist items exist: period filtering uses ChecklistItem node `lastUpdatedTime` (fallback `createdTime`) in UTC — see [`src/checklist/data/apm-property-map.md`](../src/checklist/data/apm-property-map.md). Stale seed timestamps outside the selected window (`24h` / `7d` / `30d`) will correctly yield an empty breakdown; try `30d`, re-seed, or touch/update items so `lastUpdatedTime` falls in-window.
 
 ## Note
 
-This checklist is a **manual** verification against the live project. Automated coverage of the wiring path lives in `src/checklist/shell/ChecklistPage.cdfWiring.test.tsx` and dashboard/shell tests under `src/checklist/dashboard/**` and `src/checklist/shell/**`.
+This checklist is a **manual** verification against the live project. Automated coverage of the wiring path lives in `src/checklist/shell/ChecklistPage.cdfWiring.test.tsx` and dashboard/shell/notifications tests under `src/checklist/dashboard/**`, `src/checklist/shell/**`, and `src/checklist/notifications/**`.

@@ -47,11 +47,11 @@ Cap list length if needed (document, e.g. 50). Empty array when nothing applies 
 
 ## Tarefas
 
-- [ ] Replace Cdf Day-0 stub with real `listInAppNotifications` (derive from existing APM reads; respect DMS limits — see `dm-limits-and-best-practices` skill).
-- [ ] Map Not OK + Done/completed into feed items (FR-V3-003); no other trigger types required.
-- [ ] Keep `FixtureChecklistService.listInAppNotifications` deterministic for B/C tests (at least one of each trigger).
-- [ ] Unit tests: derivation mapping / empty feed / error path on underlying CDF failure / assert no external send side effects.
-- [ ] PR → `main` (document id scheme + property mapping in PR body or `apm-property-map.md`).
+- [x] Replace Cdf Day-0 stub with real `listInAppNotifications` (derive from existing APM reads; respect DMS limits — see `dm-limits-and-best-practices` skill).
+- [x] Map Not OK + Done/completed into feed items (FR-V3-003); no other trigger types required.
+- [x] Keep `FixtureChecklistService.listInAppNotifications` deterministic for B/C tests (at least one of each trigger).
+- [x] Unit tests: derivation mapping / empty feed / error path on underlying CDF failure / assert no external send side effects.
+- [x] PR → `main` (document id scheme + property mapping in PR body or `apm-property-map.md`) — PR #7.
 
 ## Cursor prompt sugerido
 

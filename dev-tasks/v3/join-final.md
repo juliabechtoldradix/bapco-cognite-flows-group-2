@@ -17,17 +17,18 @@ If A and B both open PRs, either merge order is fine (disjoint paths). **C must 
 
 ## Integration checklist
 
-- [ ] `npm test` / `npm run lint` / `npm run build` green on `main`.
-- [ ] Overview (v1) still works: KPIs, search, quick view, host restore of search + selected id.
-- [ ] Dashboard (v2) still works: period + active view host restore, OK/Not OK breakdown.
-- [ ] Bell visible in app chrome on Overview and Dashboard (SC-V3-001).
-- [ ] Opening the popup shows Not OK and/or completed items when data exists (or Fixture/demo feed) (SC-V3-002).
-- [ ] Empty / loading / error states in the open popup (FR-V3-005).
-- [ ] Closing the popup leaves the current view unchanged.
-- [ ] Marking read persists across reload / shared URL when `readNotificationIds` is host-synced (FR-V3-007).
-- [ ] Confirm **no** external notification send path exists (FR-V3-004 / SC-V3-003).
-- [ ] Confirm **no** new CDF notification views/spaces were added.
-- [ ] Update this folder’s task checkboxes / mark v3 status in [README.md](./README.md) and root [dev-tasks/README.md](../README.md) when done.
+- [x] `npm test` / `npm run lint` / `npm run build` green on `main`.
+- [x] Overview (v1) still works: KPIs, search, quick view, host restore of search + selected id.
+- [x] Dashboard (v2) still works: period + active view host restore, OK/Not OK breakdown.
+- [x] Bell visible in app chrome on Overview and Dashboard (SC-V3-001).
+- [x] Opening the popup shows Not OK and/or completed items when data exists (or Fixture/demo feed) (SC-V3-002).
+- [x] Empty / loading / error states in the open popup (FR-V3-005).
+- [x] Closing the popup leaves the current view unchanged.
+- [x] Marking read persists across reload / shared URL when `readNotificationIds` is host-synced (FR-V3-007).
+- [x] Confirm **no** external notification send path exists (FR-V3-004 / SC-V3-003).
+- [x] Confirm **no** new CDF notification views/spaces were added.
+- [x] Update this folder’s task checkboxes / mark v3 status in [README.md](./README.md) and root [dev-tasks/README.md](../README.md) when done.
+- [x] Optional: short note in `docs/cdf-seed-verification.md` for notifications smoke.
 
 ## Conflict triage (if something still clashes)
 
@@ -44,4 +45,4 @@ If A and B both open PRs, either merge order is fine (disjoint paths). **C must 
 - CDF schema changes for notification storage.
 - Admin UX for customizable recipients / triggers / formats.
 
-**Status:** Pending until Day-0 + A/B/C land.
+**Status:** Complete on `main` after Day-0 + PRs #7 (data), #8 (notifications UI), #9 (shell).
