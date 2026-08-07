@@ -13,7 +13,7 @@ import {
   TaskResultDashboardViewModelProvider,
 } from '../dashboard';
 import { CdfChecklistService } from '../data/CdfChecklistService';
-import { NotificationsBell } from '../notifications';
+import { NotificationsBell, NotificationsViewModelProvider } from '../notifications';
 import { ChecklistOverviewPanel, ChecklistOverviewViewModelProvider } from '../overview';
 import { ChecklistQuickView, QuickViewUiStateProvider } from '../quickview';
 import { HostSyncedStateProvider, type HostSyncedApi } from '../state/HostSyncedState';
@@ -59,12 +59,12 @@ function ChecklistPageContent() {
               />
               <p className="text-sm font-medium text-link-foreground">Kamyr OEC</p>
             </div>
-            <div data-testid="notifications-bell">
+            <NotificationsViewModelProvider checklistService={checklistService}>
               <NotificationsBell
                 readNotificationIds={readNotificationIds}
                 onMarkRead={onMarkNotificationRead}
               />
-            </div>
+            </NotificationsViewModelProvider>
           </div>
           <h1 className="text-2xl font-semibold text-foreground">
             {isDashboard ? 'Task result dashboard' : 'Checklist overview'}

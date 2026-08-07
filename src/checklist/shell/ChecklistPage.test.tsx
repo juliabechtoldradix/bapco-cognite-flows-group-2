@@ -80,10 +80,12 @@ describe(ChecklistPage.name, () => {
     );
 
     await waitFor(() => expect(screen.getByTestId('checklist-overview')).toBeInTheDocument());
+    expect(screen.getByTestId('notifications-bell-root')).toBeInTheDocument();
     expect(screen.getByTestId('notifications-bell')).toBeInTheDocument();
 
     await user.click(screen.getByTestId('nav-dashboard'));
     await waitFor(() => expect(screen.getByTestId('task-result-dashboard')).toBeInTheDocument());
+    expect(screen.getByTestId('notifications-bell-root')).toBeInTheDocument();
     expect(screen.getByTestId('notifications-bell')).toBeInTheDocument();
   });
 
