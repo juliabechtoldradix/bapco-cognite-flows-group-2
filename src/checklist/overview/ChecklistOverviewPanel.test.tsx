@@ -147,6 +147,7 @@ describe(ChecklistOverviewPanel.name, () => {
           series: [],
         })
       ),
+      listInAppNotifications: vi.fn(() => Promise.resolve([])),
     };
 
     render(

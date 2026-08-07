@@ -2,12 +2,12 @@
 
 Parallel tracks for SPEC § **v3: Alerts and Notifications** (in-app bell + popup feed derived from existing checklist/result reads).
 
-**Status: Planned** — Day-0 + A/B/C not started. Join checklist: [join-final.md](./join-final.md).
+**Status: In progress** — Day-0 done on `main`; A/B/C not started. Join checklist: [join-final.md](./join-final.md).
 
 ## Merge / branch order
 
 ```text
-0) Day-0  →  feat/alerts-day0  (contracts + stubs)  — merge FIRST on main
+0) Day-0  →  DONE on main (contracts + stubs)
       │
       ├─► Dev A  feat/alerts-data              (parallel with B)
       ├─► Dev B  feat/alerts-notifications-ui  (parallel with A)
@@ -18,7 +18,7 @@ Join / smoke on main after C lands                 → join-final
 
 | Step | Branch | Owner | Task file | Merge when |
 | --- | --- | --- | --- | --- |
-| 0 | `feat/alerts-day0` | lead | [day-0-contracts.md](./day-0-contracts.md) | **FIRST** into `main` before A/B/C |
+| 0 | ~~`feat/alerts-day0`~~ | lead | [day-0-contracts.md](./day-0-contracts.md) | **Done** on `main` |
 | A | `feat/alerts-data` | Dev A | [dev-a-alerts-data.md](./dev-a-alerts-data.md) | After Day-0; parallel with B |
 | B | `feat/alerts-notifications-ui` | Dev B | [dev-b-alerts-notifications-ui.md](./dev-b-alerts-notifications-ui.md) | After Day-0; parallel with A |
 | C | `feat/alerts-shell` | Dev C | [dev-c-alerts-shell.md](./dev-c-alerts-shell.md) | **LAST** (rebase after A+B) |

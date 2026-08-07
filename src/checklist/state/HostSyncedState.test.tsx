@@ -58,6 +58,7 @@ describe(HostSyncedStateProvider.name, () => {
           selectedChecklistId: null,
           activeView: 'overview',
           periodPreset: '7d',
+          readNotificationIds: [],
         })
       )
     );
@@ -70,6 +71,7 @@ describe(HostSyncedStateProvider.name, () => {
           selectedChecklistId: 'fixture-route1',
           activeView: 'overview',
           periodPreset: '7d',
+          readNotificationIds: [],
         })
       )
     );
@@ -102,6 +104,7 @@ describe(HostSyncedStateProvider.name, () => {
           selectedChecklistId: 'fixture-route2',
           activeView: 'dashboard',
           periodPreset: '7d',
+          readNotificationIds: [],
         })
       )
     );
@@ -125,6 +128,7 @@ describe(HostSyncedStateProvider.name, () => {
           selectedChecklistId: null,
           activeView: 'dashboard',
           periodPreset: '7d',
+          readNotificationIds: [],
         })
       )
     );
@@ -137,6 +141,7 @@ describe(HostSyncedStateProvider.name, () => {
           selectedChecklistId: null,
           activeView: 'dashboard',
           periodPreset: '24h',
+          readNotificationIds: [],
         })
       )
     );

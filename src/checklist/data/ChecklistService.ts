@@ -4,6 +4,7 @@ import type {
   ChecklistResultRow,
   ChecklistService,
   ChecklistSummary,
+  InAppNotification,
   TaskResultDashboardData,
   TaskResultPeriodPreset,
   TaskResultTimeSeriesPoint,
@@ -100,6 +101,11 @@ export class FixtureChecklistService implements ChecklistService {
   async getTaskResultDashboard(period: TaskResultPeriodPreset): Promise<TaskResultDashboardData> {
     return fixtureTaskResultDashboard(period);
   }
+
+  /** Synthetic in-app notifications for UI tests until Dev A lands real derivation. */
+  async listInAppNotifications(): Promise<InAppNotification[]> {
+    return fixtureInAppNotifications();
+  }
 }
 
 function fixtureOutcome(task: FixtureTask, forceNotOk: boolean): ChecklistResultOutcome {
@@ -138,6 +144,36 @@ function fixtureTaskResultDashboard(period: TaskResultPeriodPreset): TaskResultD
     breakdown: { ok, notOk, other: period === '24h' ? 1 : 2 },
     series,
   };
+}
+
+function fixtureInAppNotifications(): InAppNotification[] {
+  const notOkRoute = OEC_ROUTE_FIXTURES.find((route) => route.hasNotOk);
+  const completedRoute = OEC_ROUTE_FIXTURES.find((route) => route.status === 'Done');
+  const items: InAppNotification[] = [];
+
+  if (notOkRoute) {
+    items.push({
+      id: `notOk:${notOkRoute.id}`,
+      trigger: 'notOk',
+      title: `Not OK result on ${notOkRoute.name}`,
+      body: 'Checklist has at least one Not OK task result',
+      checklistId: notOkRoute.id,
+      createdAt: '2026-08-06T12:00:00.000Z',
+    });
+  }
+
+  if (completedRoute) {
+    items.push({
+      id: `completed:${completedRoute.id}`,
+      trigger: 'completed',
+      title: `Checklist completed: ${completedRoute.name}`,
+      body: 'Checklist status is Done',
+      checklistId: completedRoute.id,
+      createdAt: '2026-08-05T08:00:00.000Z',
+    });
+  }
+
+  return items;
 }
 
 function fixtureSeries(period: TaskResultPeriodPreset): TaskResultTimeSeriesPoint[] {

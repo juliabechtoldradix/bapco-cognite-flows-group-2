@@ -1,6 +1,7 @@
 /**
- * Shared contracts for Checklist KPIs + Overview (v1) and Task Result Dashboard (v2 Day-0).
- * Day-0 freezes dashboard types / host fields; Dev A owns CDF aggregation later.
+ * Shared contracts for Checklist KPIs + Overview (v1), Task Result Dashboard (v2),
+ * and Alerts / Notifications (v3 Day-0).
+ * Day-0 freezes notification types / host fields; Dev A owns CDF derivation later.
  */
 
 export type ChecklistStatus = 'ToDo' | 'Ongoing' | 'Done' | 'Overdue';
@@ -61,11 +62,29 @@ export type TaskResultDashboardData = {
   series: TaskResultTimeSeriesPoint[];
 };
 
+/** Fixed in-app notification triggers (v3) — no external delivery. */
+export type InAppNotificationTrigger = 'notOk' | 'completed';
+
+export type InAppNotification = {
+  id: string;
+  trigger: InAppNotificationTrigger;
+  /** Human-readable title for the feed row */
+  title: string;
+  /** Optional secondary line (route name, timestamp hint, etc.) */
+  body?: string;
+  /** Related checklist id when known — enables optional navigate later */
+  checklistId: string | null;
+  /** ISO timestamp used for ranking (newest first) */
+  createdAt: string;
+};
+
 export type HostSyncedState = {
   searchQuery: string;
   selectedChecklistId: string | null;
   activeView: AppView;
   periodPreset: TaskResultPeriodPreset;
+  /** Ids marked read in the in-app feed (FR-V3-007). */
+  readNotificationIds: string[];
 };
 
 export const DEFAULT_HOST_SYNCED_STATE: HostSyncedState = {
@@ -73,6 +92,7 @@ export const DEFAULT_HOST_SYNCED_STATE: HostSyncedState = {
   selectedChecklistId: null,
   activeView: 'overview',
   periodPreset: '7d',
+  readNotificationIds: [],
 };
 
 /** Training instance space (group 2). */
@@ -90,6 +110,7 @@ export interface ChecklistService {
   searchChecklists(query: string): Promise<ChecklistSummary[]>;
   getResults(checklistId: string): Promise<ChecklistResultRow[]>;
   getTaskResultDashboard(period: TaskResultPeriodPreset): Promise<TaskResultDashboardData>;
+  listInAppNotifications(): Promise<InAppNotification[]>;
 }
 
 export function isChecklistStatus(value: unknown): value is ChecklistStatus {
@@ -104,25 +125,37 @@ export function isTaskResultPeriodPreset(value: unknown): value is TaskResultPer
   return value === '24h' || value === '7d' || value === '30d';
 }
 
+export function isInAppNotificationTrigger(value: unknown): value is InAppNotificationTrigger {
+  return value === 'notOk' || value === 'completed';
+}
+
+export function isReadNotificationIds(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((id) => typeof id === 'string');
+}
+
 /**
- * Full host-synced state (all v2 fields present and valid).
- * Prefer {@link parseHostSyncedState} for URL restore — it accepts legacy v1 payloads.
+ * Full host-synced state (all v3 fields present and valid).
+ * Prefer {@link parseHostSyncedState} for URL restore — it accepts legacy v1/v2 payloads.
  */
 export function isHostSyncedState(value: unknown): value is HostSyncedState {
   if (!isHostSyncedCore(value)) {
     return false;
   }
-  return isAppView(value.activeView) && isTaskResultPeriodPreset(value.periodPreset);
+  return (
+    isAppView(value.activeView) &&
+    isTaskResultPeriodPreset(value.periodPreset) &&
+    isReadNotificationIds(value.readNotificationIds)
+  );
 }
 
 export function parseHostSyncedState(raw: string | undefined): HostSyncedState {
   if (!raw) {
-    return { ...DEFAULT_HOST_SYNCED_STATE };
+    return copyDefaultHostSyncedState();
   }
   try {
     const parsed: unknown = JSON.parse(raw);
     if (!isHostSyncedCore(parsed)) {
-      return { ...DEFAULT_HOST_SYNCED_STATE };
+      return copyDefaultHostSyncedState();
     }
     return {
       searchQuery: parsed.searchQuery,
@@ -131,11 +164,14 @@ export function parseHostSyncedState(raw: string | undefined): HostSyncedState {
       periodPreset: isTaskResultPeriodPreset(parsed.periodPreset)
         ? parsed.periodPreset
         : DEFAULT_HOST_SYNCED_STATE.periodPreset,
+      readNotificationIds: isReadNotificationIds(parsed.readNotificationIds)
+        ? [...parsed.readNotificationIds]
+        : [...DEFAULT_HOST_SYNCED_STATE.readNotificationIds],
     };
   } catch {
     // ignore malformed host state
   }
-  return { ...DEFAULT_HOST_SYNCED_STATE };
+  return copyDefaultHostSyncedState();
 }
 
 type HostSyncedCore = {
@@ -143,6 +179,7 @@ type HostSyncedCore = {
   selectedChecklistId: string | null;
   activeView?: unknown;
   periodPreset?: unknown;
+  readNotificationIds?: unknown;
 };
 
 function isHostSyncedCore(value: unknown): value is HostSyncedCore {
@@ -156,4 +193,11 @@ function isHostSyncedCore(value: unknown): value is HostSyncedCore {
   const selectedOk =
     candidate.selectedChecklistId === null || typeof candidate.selectedChecklistId === 'string';
   return typeof candidate.searchQuery === 'string' && selectedOk;
+}
+
+function copyDefaultHostSyncedState(): HostSyncedState {
+  return {
+    ...DEFAULT_HOST_SYNCED_STATE,
+    readNotificationIds: [...DEFAULT_HOST_SYNCED_STATE.readNotificationIds],
+  };
 }

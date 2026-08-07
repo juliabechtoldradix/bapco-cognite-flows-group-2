@@ -5,6 +5,8 @@ import {
   isAppView,
   isChecklistStatus,
   isHostSyncedState,
+  isInAppNotificationTrigger,
+  isReadNotificationIds,
   isTaskResultPeriodPreset,
   parseHostSyncedState,
 } from './contracts';
@@ -28,6 +30,16 @@ describe('checklist contracts', () => {
     expect(isTaskResultPeriodPreset('1h')).toBe(false);
   });
 
+  it('accepts in-app notification triggers and read id lists', () => {
+    expect(isInAppNotificationTrigger('notOk')).toBe(true);
+    expect(isInAppNotificationTrigger('completed')).toBe(true);
+    expect(isInAppNotificationTrigger('email')).toBe(false);
+    expect(isReadNotificationIds([])).toBe(true);
+    expect(isReadNotificationIds(['notOk:fixture-route1'])).toBe(true);
+    expect(isReadNotificationIds(['a', 1])).toBe(false);
+    expect(isReadNotificationIds('a')).toBe(false);
+  });
+
   it('validates full host-synced state shape', () => {
     expect(
       isHostSyncedState({
@@ -35,6 +47,7 @@ describe('checklist contracts', () => {
         selectedChecklistId: 'fixture-route2',
         activeView: 'dashboard',
         periodPreset: '24h',
+        readNotificationIds: ['notOk:fixture-route1'],
       })
     ).toBe(true);
     expect(
@@ -43,8 +56,18 @@ describe('checklist contracts', () => {
         selectedChecklistId: null,
         activeView: 'overview',
         periodPreset: '7d',
+        readNotificationIds: [],
       })
     ).toBe(true);
+    // Legacy v2 payload (missing v3 field) is not a full HostSyncedState
+    expect(
+      isHostSyncedState({
+        searchQuery: 'feed',
+        selectedChecklistId: null,
+        activeView: 'overview',
+        periodPreset: '7d',
+      })
+    ).toBe(false);
     // Legacy v1 payload (missing v2 fields) is not a full HostSyncedState
     expect(isHostSyncedState({ searchQuery: 'feed', selectedChecklistId: null })).toBe(false);
     expect(isHostSyncedState({ searchQuery: 1, selectedChecklistId: null })).toBe(false);
@@ -58,6 +81,7 @@ describe('checklist contracts', () => {
       selectedChecklistId: 'fixture-route1',
       activeView: 'overview',
       periodPreset: '7d',
+      readNotificationIds: [],
     });
     expect(
       parseHostSyncedState(
@@ -68,6 +92,18 @@ describe('checklist contracts', () => {
       selectedChecklistId: null,
       activeView: 'dashboard',
       periodPreset: '30d',
+      readNotificationIds: [],
+    });
+    expect(
+      parseHostSyncedState(
+        '{"searchQuery":"","selectedChecklistId":null,"activeView":"overview","periodPreset":"7d","readNotificationIds":["completed:fixture-route3"]}'
+      )
+    ).toEqual({
+      searchQuery: '',
+      selectedChecklistId: null,
+      activeView: 'overview',
+      periodPreset: '7d',
+      readNotificationIds: ['completed:fixture-route3'],
     });
   });
 });

@@ -48,5 +48,12 @@ describe(FixtureChecklistService.name, () => {
     await expect(service.getTaskResultDashboard('24h')).resolves.toMatchObject({ period: '24h' });
     await expect(service.getTaskResultDashboard('30d')).resolves.toMatchObject({ period: '30d' });
   });
+
+  it('returns deterministic synthetic in-app notifications', async () => {
+    const items = await service.listInAppNotifications();
+    expect(items.some((item) => item.trigger === 'notOk')).toBe(true);
+    expect(items.some((item) => item.trigger === 'completed')).toBe(true);
+    expect(items[0]?.createdAt >= (items[1]?.createdAt ?? '')).toBe(true);
+  });
 });
 

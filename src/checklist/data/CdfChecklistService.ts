@@ -6,6 +6,7 @@ import {
   type ChecklistKpis,
   type ChecklistResultRow,
   type ChecklistService,
+  type InAppNotification,
   type TaskResultDashboardData,
   type TaskResultPeriodPreset,
   type ChecklistSummary,
@@ -199,6 +200,11 @@ export class CdfChecklistService implements ChecklistService {
     const nowMs = this.nowMs();
     const items = await this.listTaskResultItemsForDashboard(period, nowMs);
     return aggregateTaskResults(items, period, nowMs);
+  }
+
+  /** Day-0 stub — Dev A replaces with derivation from existing APM reads. */
+  async listInAppNotifications(): Promise<InAppNotification[]> {
+    return [];
   }
 
   async getResults(checklistId: string): Promise<ChecklistResultRow[]> {

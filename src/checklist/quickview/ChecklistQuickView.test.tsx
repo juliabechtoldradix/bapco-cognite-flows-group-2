@@ -76,6 +76,7 @@ describe(ChecklistQuickView.name, () => {
         breakdown: { ok: 0, notOk: 0, other: 0 },
         series: [],
       })),
+      listInAppNotifications: vi.fn(async () => []),
     };
 
     render(

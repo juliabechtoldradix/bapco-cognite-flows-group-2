@@ -88,6 +88,7 @@ describe(ChecklistPage.name, () => {
           selectedChecklistId: null,
           activeView: 'dashboard',
           periodPreset: '7d',
+          readNotificationIds: [],
         })
       )
     );
@@ -101,6 +102,7 @@ describe(ChecklistPage.name, () => {
           selectedChecklistId: null,
           activeView: 'overview',
           periodPreset: '7d',
+          readNotificationIds: [],
         })
       )
     );

@@ -82,6 +82,7 @@ export function HostSyncedStateProvider({
       selectedChecklistId: state.selectedChecklistId,
       activeView: state.activeView,
       periodPreset: state.periodPreset,
+      readNotificationIds: state.readNotificationIds,
       setSearchQuery,
       setSelectedChecklistId,
       setActiveView,
@@ -96,6 +97,7 @@ export function HostSyncedStateProvider({
       state.selectedChecklistId,
       state.activeView,
       state.periodPreset,
+      state.readNotificationIds,
     ]
   );
 

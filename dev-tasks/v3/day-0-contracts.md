@@ -99,10 +99,10 @@ Stub UI: Aura button labeled “Notifications stub — Dev B” or similar is fi
 
 ## Tasks
 
-- [ ] Add types + host-state field + `listInAppNotifications` to `contracts.ts` / tests.
-- [ ] Create `src/checklist/notifications/` stub bell + barrel `index.ts`.
-- [ ] Update Fixture + Cdf (+ mocks in tests) so `tsc` / `vitest` stay green.
-- [ ] Land on `main` before A/B/C branch.
+- [x] Add types + host-state field + `listInAppNotifications` to `contracts.ts` / tests.
+- [x] Create `src/checklist/notifications/` stub bell + barrel `index.ts`.
+- [x] Update Fixture + Cdf (+ mocks in tests) so `tsc` / `vitest` stay green.
+- [x] Landed on `main` (Day-0 implemented directly). A/B/C may branch from updated `main`.
 
 ## Cursor prompt sugerido
 

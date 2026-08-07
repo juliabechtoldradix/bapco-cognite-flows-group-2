@@ -39,6 +39,9 @@ describe(useTaskResultDashboardViewModel.name, () => {
           ],
         } satisfies TaskResultDashboardData)
       ),
+      listInAppNotifications: vi.fn(() => {
+        assert.fail('listInAppNotifications should not be called by dashboard view model');
+      }),
     };
 
     mockContext = {

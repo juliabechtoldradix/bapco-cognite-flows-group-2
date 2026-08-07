@@ -57,6 +57,7 @@ describe(TaskResultDashboardPanel.name, () => {
       searchChecklists: vi.fn(async () => []),
       getResults: vi.fn(async () => []),
       getTaskResultDashboard: vi.fn(() => Promise.reject(new Error('Dashboard failed'))),
+      listInAppNotifications: vi.fn(async () => []),
     };
 
     render(
@@ -91,6 +92,7 @@ describe(TaskResultDashboardPanel.name, () => {
         breakdown: { ok: 0, notOk: 0, other: 0 },
         series: [],
       })),
+      listInAppNotifications: vi.fn(async () => []),
     };
 
     render(
