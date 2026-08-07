@@ -1,11 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 
 import type { ChecklistService } from '../contracts';
 import { FixtureChecklistService } from '../data/ChecklistService';
 import { ChecklistServiceProvider } from '../shell/ChecklistServiceContext';
+
 import { ChecklistQuickView } from './ChecklistQuickView';
 import { QuickViewUiStateProvider } from './QuickViewUiState';
 

@@ -1,3 +1,4 @@
+import type { HostAppAPI } from '@cognite/app-sdk';
 import {
   createContext,
   useCallback,
@@ -7,7 +8,6 @@ import {
   type ReactNode,
 } from 'react';
 
-import type { HostAppAPI } from '@cognite/app-sdk';
 
 import {
   parseHostSyncedState,

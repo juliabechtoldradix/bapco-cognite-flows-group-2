@@ -90,7 +90,19 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': ['error', noUnusedVarsOptions],
       'aura/no-overriding-styles': 'warn',
       'no-unused-vars': 'off',
-      'react-refresh/only-export-components': ['error', { allowConstantExport: true }],
+      'react-refresh/only-export-components': [
+        'error',
+        {
+          allowConstantExport: true,
+          // Context modules co-locate Provider + hook / context object (DI pattern).
+          allowExportNames: [
+            'ChecklistServiceContext',
+            'useChecklistService',
+            'useHostSyncedStorage',
+            'useQuickViewUiStorage',
+          ],
+        },
+      ],
     },
   }
 );

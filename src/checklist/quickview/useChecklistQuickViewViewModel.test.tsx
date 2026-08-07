@@ -1,9 +1,10 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
 import type { ComponentType, ReactNode } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 
 import type { ChecklistService } from '../contracts';
 import { ChecklistServiceContext } from '../shell/ChecklistServiceContext';
+
 import { ChecklistQuickViewViewModelContext } from './ChecklistQuickViewViewModelContext';
 import { QuickViewUiStateProvider, useQuickViewUiStorage } from './QuickViewUiState';
 import { useChecklistQuickViewViewModel } from './useChecklistQuickViewViewModel';

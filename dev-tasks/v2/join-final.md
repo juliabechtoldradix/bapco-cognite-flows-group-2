@@ -16,14 +16,14 @@ If A and B both open PRs, either merge order is fine (disjoint paths). **C must 
 
 ## Integration checklist
 
-- [ ] `npm test` / `npm run lint` / `npm run build` green on `main`.
-- [ ] Overview (v1) still works: KPIs, search, quick view, host restore of search + selected id.
-- [ ] Switch to Dashboard: OK vs Not OK breakdown visible (SC-V2-001).
-- [ ] Change period (`24h` / `7d` / `30d`): series updates; URL/host state restores period + active view (FR-V2-003, SC-V2-002).
-- [ ] Loading / error / empty states on dashboard (FR-V2-004).
-- [ ] With seed data (`npm run seed:oec`): dashboard not stuck at all zeros if items exist in the period window (or document if timestamps make training data fall outside the window).
-- [ ] Update this folder’s task checkboxes / mark v2 status in [README.md](./README.md) when done.
-- [ ] Optional: short note in `docs/cdf-seed-verification.md` for dashboard smoke.
+- [x] `npm test` / `npm run lint` / `npm run build` green on `main`.
+- [x] Overview (v1) still works: KPIs, search, quick view, host restore of search + selected id.
+- [x] Switch to Dashboard: OK vs Not OK breakdown visible (SC-V2-001).
+- [x] Change period (`24h` / `7d` / `30d`): series updates; URL/host state restores period + active view (FR-V2-003, SC-V2-002).
+- [x] Loading / error / empty states on dashboard (FR-V2-004).
+- [x] With seed data (`npm run seed:oec`): dashboard not stuck at all zeros if items exist in the period window (or document if timestamps make training data fall outside the window).
+- [x] Update this folder’s task checkboxes / mark v2 status in [README.md](./README.md) when done.
+- [x] Optional: short note in `docs/cdf-seed-verification.md` for dashboard smoke.
 
 ## Conflict triage (if something still clashes)
 
@@ -38,3 +38,5 @@ If A and B both open PRs, either merge order is fine (disjoint paths). **C must 
 
 - Alerts / notifications (SPEC out of scope for v1/v2).
 - New CDF views (unless A proved aggregation impossible — then open a SPEC clarification first).
+
+**Status:** Complete on `main` after PRs #4 (data), #5 (dashboard UI), #6 (shell).

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { ChecklistResultRow } from '../contracts';
+
 import { groupResultsBySectionAndEquipment } from './groupResults';
 
 describe(groupResultsBySectionAndEquipment.name, () => {

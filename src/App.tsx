@@ -1,11 +1,11 @@
-import type { ComponentProps } from 'react';
-import { useEffect, useState } from 'react';
 import { connectToHostApp as connectToHostAppImpl } from '@cognite/app-sdk';
 import type { HostAppAPI } from '@cognite/app-sdk';
 import { CogniteSdkProvider } from '@cognite/app-sdk/react';
 import { Alert, AlertDescription } from '@cognite/aura/components/alert';
 import { Card, CardContent } from '@cognite/aura/components/card';
 import { Loader } from '@cognite/aura/components/loader';
+import { useEffect, useState } from 'react';
+import type { ComponentProps } from 'react';
 
 import type { ChecklistService } from './checklist/contracts';
 import { ChecklistPage } from './checklist/shell/ChecklistPage';

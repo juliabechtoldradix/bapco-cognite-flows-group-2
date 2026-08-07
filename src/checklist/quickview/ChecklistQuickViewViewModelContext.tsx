@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 
 import { useChecklistService } from '../shell/ChecklistServiceContext';
+
 import { useQuickViewUiStorage } from './QuickViewUiState';
 
 const defaultDeps = {

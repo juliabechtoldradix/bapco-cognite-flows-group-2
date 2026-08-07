@@ -1,8 +1,9 @@
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 
 import { HostSyncedStateProvider } from '../state/HostSyncedState';
+
 import { useChecklistPageViewModel } from './useChecklistPageViewModel';
 
 describe(useChecklistPageViewModel.name, () => {

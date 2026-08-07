@@ -39,12 +39,13 @@
 
 ## Tarefas
 
-- [ ] Replace Cdf Day-0 stub with real `getTaskResultDashboard` (query/list + aggregate; respect DMS limits — see `dm-limits-and-best-practices` skill).
-- [ ] Map item statuses → OK / Not OK / other (reuse `mapItemStatusToOutcome` / `isNotOkOutcome` where possible).
-- [ ] Filter by selected period using a documented timestamp field.
-- [ ] Keep `FixtureChecklistService.getTaskResultDashboard` deterministic for B/C tests.
-- [ ] Unit tests: request construction / aggregation / empty period / error path.
-- [ ] PR → `main` (document property → aggregation mapping in PR body or `src/checklist/data/apm-property-map.md`).
+- [x] Replace Cdf Day-0 stub with real `getTaskResultDashboard` (query/list + aggregate; respect DMS limits — see `dm-limits-and-best-practices` skill).
+- [x] Map item statuses → OK / Not OK / other (reuse `mapItemStatusToOutcome` / `isNotOkOutcome` where possible).
+- [x] Filter by selected period using a documented timestamp field.
+- [x] Keep `FixtureChecklistService.getTaskResultDashboard` deterministic for B/C tests.
+- [x] Unit tests: request construction / aggregation / empty period / error path.
+- [x] PR → `main` (document property → aggregation mapping in PR body or `src/checklist/data/apm-property-map.md`) — PR #4.
+
 
 ## Cursor prompt sugerido
 

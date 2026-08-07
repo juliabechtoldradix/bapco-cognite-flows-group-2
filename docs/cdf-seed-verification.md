@@ -22,15 +22,23 @@ Confirm ApmAppData checklist data exists before demoing the Fusion app.
 
 2. **In Fusion Data explorer** (or API), list instances in `bapco-flows-training-group-2` with view `Checklist/v7`. Expect four OEC routes (titles matching Route One…Four).
 
-3. **In the Flows app** (hosted):
+3. **In the Flows app** (hosted) — Overview (v1):
 
    - [ ] KPIs show non-zero counts when checklists exist (SC-001)
    - [ ] Search “Feed” narrows to Route Two (SC-002)
    - [ ] Selecting a checklist fills quick view with section/equipment rows (SC-003)
    - [ ] Reload / shared URL restores `searchQuery` + `selectedChecklistId` (SC-004)
 
-4. **If KPIs stay at zero** after seed: check IdP credentials, space ACL, and that `CdfChecklistService` is running (no `checklistService` prop override in production).
+4. **Task Result Dashboard** (v2) — switch to **Dashboard** in the app nav:
+
+   - [ ] OK vs Not OK breakdown is visible (SC-V2-001)
+   - [ ] Changing period (`24h` / `7d` / `30d`) updates the series; reload restores `activeView` + `periodPreset` (FR-V2-003, SC-V2-002)
+   - [ ] Loading / error / empty states appear as expected (FR-V2-004)
+
+5. **If KPIs stay at zero** after seed: check IdP credentials, space ACL, and that `CdfChecklistService` is running (no `checklistService` prop override in production).
+
+6. **If the dashboard shows all zeros** but checklist items exist: period filtering uses ChecklistItem node `lastUpdatedTime` (fallback `createdTime`) in UTC — see [`src/checklist/data/apm-property-map.md`](../src/checklist/data/apm-property-map.md). Stale seed timestamps outside the selected window (`24h` / `7d` / `30d`) will correctly yield an empty breakdown; try `30d`, re-seed, or touch/update items so `lastUpdatedTime` falls in-window.
 
 ## Note
 
-This checklist is a **manual** verification against the live project. Automated coverage of the wiring path lives in `src/checklist/shell/ChecklistPage.cdfWiring.test.tsx`.
+This checklist is a **manual** verification against the live project. Automated coverage of the wiring path lives in `src/checklist/shell/ChecklistPage.cdfWiring.test.tsx` and dashboard/shell tests under `src/checklist/dashboard/**` and `src/checklist/shell/**`.

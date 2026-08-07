@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import { groupResultsBySectionAndEquipment, type ResultSectionGroup } from './groupResults';
 import { useChecklistQuickViewViewModelDeps } from './ChecklistQuickViewViewModelContext';
+import { groupResultsBySectionAndEquipment, type ResultSectionGroup } from './groupResults';
 
 export type ChecklistQuickViewViewModel = {
   status: 'idle' | 'loading' | 'success' | 'error' | 'empty';

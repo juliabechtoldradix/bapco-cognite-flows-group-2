@@ -34,11 +34,12 @@
 
 ## Tarefas
 
-- [ ] Replace stub `TaskResultDashboardPanel` with real UI + ViewModel (no `useState` inside the VM hook; shared storage/provider for load state).
-- [ ] Wire `getTaskResultDashboard(periodPreset)` via injected service; refetch when period prop changes.
-- [ ] Tests: loading / success / error / empty; period change calls `onPeriodChange`.
-- [ ] Use Fixture (or mock service) in tests — do not call live CDF.
-- [ ] PR → `main`.
+- [x] Replace stub `TaskResultDashboardPanel` with real UI + ViewModel (no `useState` inside the VM hook; shared storage/provider for load state).
+- [x] Wire `getTaskResultDashboard(periodPreset)` via injected service; refetch when period prop changes.
+- [x] Tests: loading / success / error / empty; period change calls `onPeriodChange`.
+- [x] Use Fixture (or mock service) in tests — do not call live CDF.
+- [x] PR → `main` — PR #5.
+
 
 ## Cursor prompt sugerido
 

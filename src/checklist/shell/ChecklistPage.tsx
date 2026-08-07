@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
 import { useCogniteSdk } from '@cognite/app-sdk/react';
 import {
   SegmentedControl,
   SegmentedControlButton,
   SegmentedControlList,
 } from '@cognite/aura/components/segmented-control';
+import { useMemo } from 'react';
 
 import ipLogo from '../../assets/ip-logo.png';
 import { isAppView, type ChecklistService } from '../contracts';
@@ -16,6 +16,7 @@ import { CdfChecklistService } from '../data/CdfChecklistService';
 import { ChecklistOverviewPanel, ChecklistOverviewViewModelProvider } from '../overview';
 import { ChecklistQuickView, QuickViewUiStateProvider } from '../quickview';
 import { HostSyncedStateProvider, type HostSyncedApi } from '../state/HostSyncedState';
+
 import { ChecklistServiceProvider, useChecklistService } from './ChecklistServiceContext';
 import { useChecklistPageViewModel } from './useChecklistPageViewModel';
 

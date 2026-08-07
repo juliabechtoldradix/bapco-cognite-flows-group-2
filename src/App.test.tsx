@@ -1,11 +1,12 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { HostAppAPI, ConnectToHostAppResult } from '@cognite/app-sdk';
+import type { ConnectToHostAppResult, HostAppAPI } from '@cognite/app-sdk';
 import { CogniteClient } from '@cognite/sdk';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { ComponentProps } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { FixtureChecklistService } from './checklist/data/ChecklistService';
 import App from './App';
+import { FixtureChecklistService } from './checklist/data/ChecklistService';
 
 type AppDeps = NonNullable<ComponentProps<typeof App>['deps']>;
 type AppApi = Pick<HostAppAPI, 'syncInternalState'>;
@@ -72,6 +73,7 @@ describe('App', () => {
   });
 
   it('restores host-synced search and selected checklist into the shell', async () => {
+    const user = userEvent.setup();
     const api = makeApi();
     const initialState = JSON.stringify({
       searchQuery: 'Feed',
@@ -90,7 +92,9 @@ describe('App', () => {
     await waitFor(() =>
       expect(screen.getByText('Route One - IV/Kamyr Digester/Diffuser')).toBeInTheDocument()
     );
-    await waitFor(() => expect(screen.getByText('7th Floor')).toBeInTheDocument());
-    expect(screen.getByText('Diffuser Scraper')).toBeInTheDocument();
+    const sectionTrigger = await screen.findByTestId('quickview-section-trigger-7th Floor');
+    await user.click(sectionTrigger);
+    await waitFor(() => expect(screen.getByText('Diffuser Scraper')).toBeInTheDocument());
   });
 });
+

@@ -17,6 +17,7 @@ import { EmptyState, EmptyStateDescription, EmptyStateTitle } from '@cognite/aur
 import { Loader } from '@cognite/aura/components/loader';
 
 import type { ChecklistResultRow } from '../contracts';
+
 import { formatOutcomeLabel, outcomeBadgeVariant } from './outcomeLabel';
 import { useChecklistQuickViewViewModel } from './useChecklistQuickViewViewModel';
 

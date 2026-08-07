@@ -1,14 +1,15 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
 import type { HostAppAPI } from '@cognite/app-sdk';
 import { CogniteSdkProvider } from '@cognite/app-sdk/react';
 import { CogniteClient } from '@cognite/sdk';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { ComponentProps } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 
 import { INSTANCE_SPACE } from '../contracts';
 import type { ChecklistInstancesClient } from '../data/CdfChecklistService';
 import { CdfChecklistService } from '../data/CdfChecklistService';
+
 import { ChecklistPage } from './ChecklistPage';
 
 type SdkDeps = NonNullable<ComponentProps<typeof CogniteSdkProvider>['deps']>;
