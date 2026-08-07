@@ -42,7 +42,7 @@
 
 - [x] Extend page ViewModel / storage usage for `readNotificationIds` (no local `useState` for these — host storage only).
 - [x] Update `ChecklistPage` (or shell header) layout: mount `NotificationsBell` with host-wired props.
-- [ ] Ensure overview + dashboard + host sync of search / selection / view / period still work.
+- [x] Ensure overview + dashboard + host sync of search / selection / view / period still work.
 - [ ] Tests: restore `readNotificationIds` from `initialState`; marking read updates `syncInternalState`; bell present on overview and dashboard.
 - [ ] Rebase on latest `main` (with A+B), fix any import-only conflicts, PR → `main`.
 

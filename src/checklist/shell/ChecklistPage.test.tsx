@@ -74,6 +74,7 @@ describe(ChecklistPage.name, () => {
             selectedChecklistId: null,
             activeView: 'overview',
             periodPreset: '7d',
+            readNotificationIds: ['notOk:fixture-route1'],
           })}
         />
       </CogniteSdkProvider>
@@ -88,7 +89,7 @@ describe(ChecklistPage.name, () => {
           selectedChecklistId: null,
           activeView: 'dashboard',
           periodPreset: '7d',
-          readNotificationIds: [],
+          readNotificationIds: ['notOk:fixture-route1'],
         })
       )
     );
@@ -102,7 +103,7 @@ describe(ChecklistPage.name, () => {
           selectedChecklistId: null,
           activeView: 'overview',
           periodPreset: '7d',
-          readNotificationIds: [],
+          readNotificationIds: ['notOk:fixture-route1'],
         })
       )
     );
@@ -122,6 +123,7 @@ describe(ChecklistPage.name, () => {
             selectedChecklistId: 'fixture-route2',
             activeView: 'overview',
             periodPreset: '7d',
+            readNotificationIds: ['completed:fixture-route3'],
           })}
         />
       </CogniteSdkProvider>
@@ -151,6 +153,9 @@ describe(ChecklistPage.name, () => {
     );
     expect(syncInternalState).toHaveBeenCalledWith(
       expect.stringContaining('"activeView":"overview"')
+    );
+    expect(syncInternalState).toHaveBeenCalledWith(
+      expect.stringContaining('"readNotificationIds":["completed:fixture-route3"]')
     );
   });
 });
