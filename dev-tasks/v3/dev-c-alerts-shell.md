@@ -43,8 +43,10 @@
 - [x] Extend page ViewModel / storage usage for `readNotificationIds` (no local `useState` for these — host storage only).
 - [x] Update `ChecklistPage` (or shell header) layout: mount `NotificationsBell` with host-wired props.
 - [x] Ensure overview + dashboard + host sync of search / selection / view / period still work.
-- [ ] Tests: restore `readNotificationIds` from `initialState`; marking read updates `syncInternalState`; bell present on overview and dashboard.
+- [x] Tests: restore `readNotificationIds` from `initialState`; marking read updates `syncInternalState`; bell present on overview and dashboard.
 - [ ] Rebase on latest `main` (with A+B), fix any import-only conflicts, PR → `main`.
+
+**Branch status:** `feat/alerts-shell` — Day-0 base; **stopped before rebase** until A (`feat/alerts-data`) and B (`feat/alerts-notifications-ui`) land on `main`.
 
 **Note:** `onSelectNotification` skipped for MVP (avoids overview selection churn). Feed is mark-read + display only until a later follow-up.
 

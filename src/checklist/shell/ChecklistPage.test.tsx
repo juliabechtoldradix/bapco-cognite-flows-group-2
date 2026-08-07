@@ -61,6 +61,32 @@ describe(ChecklistPage.name, () => {
     expect(screen.queryByTestId('checklist-overview')).not.toBeInTheDocument();
   });
 
+  it('shows the notifications bell on overview and dashboard', async () => {
+    const user = userEvent.setup();
+    render(
+      <CogniteSdkProvider deps={makeSdkDeps()}>
+        <ChecklistPage
+          api={null}
+          checklistService={new FixtureChecklistService()}
+          initialState={JSON.stringify({
+            searchQuery: '',
+            selectedChecklistId: null,
+            activeView: 'overview',
+            periodPreset: '7d',
+            readNotificationIds: ['notOk:fixture-route1'],
+          })}
+        />
+      </CogniteSdkProvider>
+    );
+
+    await waitFor(() => expect(screen.getByTestId('checklist-overview')).toBeInTheDocument());
+    expect(screen.getByTestId('notifications-bell')).toBeInTheDocument();
+
+    await user.click(screen.getByTestId('nav-dashboard'));
+    await waitFor(() => expect(screen.getByTestId('task-result-dashboard')).toBeInTheDocument());
+    expect(screen.getByTestId('notifications-bell')).toBeInTheDocument();
+  });
+
   it('syncs host state when switching Overview and Dashboard', async () => {
     const user = userEvent.setup();
     const syncInternalState = vi.fn(() => Promise.resolve(true));
