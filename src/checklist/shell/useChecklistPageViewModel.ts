@@ -6,10 +6,12 @@ export type ChecklistPageViewModel = {
   selectedChecklistId: string | null;
   activeView: AppView;
   periodPreset: TaskResultPeriodPreset;
+  readNotificationIds: string[];
   onSearchChange: (query: string) => void;
   onSelectChecklist: (id: string) => void;
   onActiveViewChange: (view: AppView) => void;
   onPeriodChange: (period: TaskResultPeriodPreset) => void;
+  onMarkNotificationRead: (notificationId: string) => void;
 };
 
 export function useChecklistPageViewModel(): ChecklistPageViewModel {
@@ -20,9 +22,11 @@ export function useChecklistPageViewModel(): ChecklistPageViewModel {
     selectedChecklistId: storage.selectedChecklistId,
     activeView: storage.activeView,
     periodPreset: storage.periodPreset,
+    readNotificationIds: storage.readNotificationIds,
     onSearchChange: storage.setSearchQuery,
     onSelectChecklist: storage.setSelectedChecklistId,
     onActiveViewChange: storage.setActiveView,
     onPeriodChange: storage.setPeriodPreset,
+    onMarkNotificationRead: storage.markNotificationRead,
   };
 }

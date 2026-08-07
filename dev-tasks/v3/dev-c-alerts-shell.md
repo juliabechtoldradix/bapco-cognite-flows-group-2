@@ -40,11 +40,13 @@
 
 ## Tarefas
 
-- [ ] Extend page ViewModel / storage usage for `readNotificationIds` (no local `useState` for these — host storage only).
+- [x] Extend page ViewModel / storage usage for `readNotificationIds` (no local `useState` for these — host storage only).
 - [ ] Update `ChecklistPage` (or shell header) layout: mount `NotificationsBell` with host-wired props.
 - [ ] Ensure overview + dashboard + host sync of search / selection / view / period still work.
 - [ ] Tests: restore `readNotificationIds` from `initialState`; marking read updates `syncInternalState`; bell present on overview and dashboard.
 - [ ] Rebase on latest `main` (with A+B), fix any import-only conflicts, PR → `main`.
+
+**Note:** `onSelectNotification` skipped for MVP (avoids overview selection churn). Feed is mark-read + display only until a later follow-up.
 
 ## Cursor prompt sugerido
 
