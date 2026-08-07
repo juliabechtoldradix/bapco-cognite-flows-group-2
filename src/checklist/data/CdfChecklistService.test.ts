@@ -75,6 +75,84 @@ describe(CdfChecklistService.name, () => {
     );
   });
 
+  it('listInAppNotifications derives Not OK and completed items from APM reads', async () => {
+    vi.mocked(instances.list).mockResolvedValue({
+      items: [
+        checklistNode(
+          'c1',
+          'Route One - IV/Kamyr Digester/Diffuser',
+          'Ready',
+          null,
+          Date.parse('2026-08-06T12:00:00.000Z')
+        ),
+        checklistNode(
+          'c3',
+          'Route Three - Blow Heat/Stripper/Turpentine',
+          'Done',
+          null,
+          Date.parse('2026-08-05T08:00:00.000Z')
+        ),
+        checklistNode(
+          'c2',
+          'Route Two - Feed System',
+          'In progress',
+          null,
+          Date.parse('2026-08-04T00:00:00.000Z')
+        ),
+      ],
+    });
+    vi.mocked(instances.query).mockResolvedValue({
+      items: {
+        itemEdges: [edge('c1', 'i1'), edge('c3', 'i3')],
+        items: [itemNode('i1', 'Not OK'), itemNode('i3', 'OK')],
+      },
+    });
+
+    const items = await service.listInAppNotifications();
+
+    expect(items.map((item) => item.id)).toEqual(['notOk:c1', 'completed:c3']);
+    expect(items[0]).toMatchObject({
+      trigger: 'notOk',
+      checklistId: 'c1',
+      createdAt: '2026-08-06T12:00:00.000Z',
+    });
+    expect(items[1]).toMatchObject({
+      trigger: 'completed',
+      checklistId: 'c3',
+      createdAt: '2026-08-05T08:00:00.000Z',
+    });
+    // In-app only — no search / outbound notification APIs.
+    expect(instances.search).not.toHaveBeenCalled();
+    expect(instances.list).toHaveBeenCalled();
+    expect(instances.query).toHaveBeenCalled();
+  });
+
+  it('listInAppNotifications returns empty feed when nothing applies', async () => {
+    vi.mocked(instances.list).mockResolvedValue({
+      items: [
+        checklistNode('c2', 'Route Two - Feed System', 'In progress', null, NOW_MS),
+      ],
+    });
+    vi.mocked(instances.query).mockResolvedValue({
+      items: {
+        itemEdges: [edge('c2', 'i9')],
+        items: [itemNode('i9', 'OK')],
+      },
+    });
+
+    await expect(service.listInAppNotifications()).resolves.toEqual([]);
+  });
+
+  it('listInAppNotifications throws when underlying CDF list fails', async () => {
+    const err = new Error('boom');
+    Object.assign(err, { status: 500 });
+    vi.mocked(instances.list).mockRejectedValue(err);
+    await expect(service.listInAppNotifications()).rejects.toThrow(
+      /CDF list failed with status 500/
+    );
+    expect(instances.search).not.toHaveBeenCalled();
+  });
+
   it('getKpis aggregates status buckets and withNotOk from listed checklists', async () => {
     vi.mocked(instances.list).mockResolvedValue({
       items: [
@@ -235,11 +313,14 @@ function checklistNode(
   externalId: string,
   title: string,
   status: string,
-  endTime: string | null
+  endTime: string | null,
+  lastUpdatedTime?: number
 ) {
   return {
     space: INSTANCE_SPACE,
     externalId,
+    lastUpdatedTime,
+    createdTime: lastUpdatedTime,
     properties: {
       cdf_apm: {
         'Checklist/v7': {
